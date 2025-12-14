@@ -1,71 +1,103 @@
-local vu1 = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-local vu14 = true
-local v23 = "MikeyHub [ CRACKED ]"
-local vu26 = vu1:CreateWindow({
-	Title = v23,
-	SubTitle = "- cracked by rex-rbx",
+local FluentLoader = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local GamePlaceId = game.PlaceId
+local GameProductInfo = game:GetService("MarketplaceService"):GetProductInfo(GamePlaceId)
+local ClientId = game:GetService("RbxAnalyticsService"):GetClientId()
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local IsMikeyHubOwned = true
+local MainWindow = FluentLoader:CreateWindow({
+	Title = "MikeyHub [ CRACK ]",
+	SubTitle = "cracked by fade lmao",
 	TabWidth = 160,
 	Size = UDim2.fromOffset(580, 460),
 	Acrylic = false,
 	Theme = "Dark",
 	MinimizeKey = Enum.KeyCode.RightShift
 })
-local v45 = {
-	Main = vu26:AddTab({
+local function Function1(Param1)
+	local InitialValue = 0
+	for LoopCounter = 1, # Param1 do
+		InitialValue = (InitialValue + string.byte(Param1, LoopCounter) * LoopCounter) % 4294967296
+	end
+	return tostring(InitialValue)
+end
+local function Function2()
+	local PlayerClone = cloneref(game:GetService("Players"))
+	return tostring(PlayerClone.LocalPlayer.UserId)
+end
+local UserInputService = game:GetService("UserInputService")
+local InputService = UserInputService
+table.find({
+	Enum.Platform.IOS,
+	Enum.Platform.Android
+}, UserInputService.GetPlatform(InputService))
+local ExecutorName = identifyexecutor()
+local LocalPlayer = game:GetService("Players").LocalPlayer
+local PlayerUserId = LocalPlayer.UserId
+local function Function3()
+	local Platform = UserInputService:GetPlatform()
+	return Platform ~= Enum.Platform.Android and (Platform ~= Enum.Platform.IOS and "PC" or "IPhone") or "Android"
+end
+local MainTab = {
+	Main = MainWindow:AddTab({
 		Title = "| Main",
 		Icon = "home"
 	}),
-	Combat = vu26:AddTab({
+	Combat = MainWindow:AddTab({
 		Title = "| Combat",
 		Icon = "swords"
 	}),
-	GunMods = vu26:AddTab({
+	GunMods = MainWindow:AddTab({
 		Title = "| Gun Mods",
 		Icon = "crosshair"
 	}),
-	Visuals = vu26:AddTab({
+	Visuals = MainWindow:AddTab({
 		Title = "| Visuals",
 		Icon = "eye"
 	}),
-	Misc = vu26:AddTab({
+	Misc = MainWindow:AddTab({
 		Title = "| Misc",
 		Icon = "circle-ellipsis"
 	})
 }
-local _ = vu1.Options
-v45.Main:AddSection("Give/Unlock Items")
-local v47 = {}
-if vu38.Backpack then
-	local v48, v49, v50 = pairs(game:GetService("ReplicatedStorage").Weapons:GetChildren())
+local Options = FluentLoader.Options
+local BooleanValue = false
+spawn(function()
+	task.wait(2)
+	BooleanValue = true
+end)
+MainTab.Main:AddSection("Give/Unlock Items")
+local EmptyTable = {}
+if LocalPlayer.Backpack then
+	local WeaponIterator, WeaponState, WeaponValue = pairs(game:GetService("ReplicatedStorage").Weapons:GetChildren())
 	while true do
-		local v51, v52 = v48(v49, v50)
-		if v51 == nil then
+		local WeaponKey, WeaponName = WeaponIterator(WeaponState, WeaponValue)
+		if WeaponKey == nil then
 			break
 		end
-		v50 = v51
-		if v52.Name ~= "M16A1" and (v52.Name ~= "Fisticuffs" and (v52.Name ~= "Diamond Back" and (v52.Name ~= "Tanto" and (v52.Name ~= "Karambit" and (v52.Name ~= "TT30" and (v52.Name ~= "Mk PM" and (v52.Name ~= "PPK" and (v52.Name ~= "M1911" and (v52.Name ~= "Model 39" and (v52.Name ~= "Python" and (v52.Name ~= "Mauser C96" and (v52.Name ~= "Akimbo G40" and (v52.Name ~= "Akimbo Deagle" and (v52.Name ~= "P08 Luger" and v52.Name ~= "Big Iron")))))))))))))) then
-			table.insert(v47, v52.Name)
+		WeaponValue = WeaponKey
+		if WeaponName.Name ~= "M16A1" and (WeaponName.Name ~= "Fisticuffs" and (WeaponName.Name ~= "Diamond Back" and (WeaponName.Name ~= "Tanto" and (WeaponName.Name ~= "Karambit" and (WeaponName.Name ~= "TT30" and (WeaponName.Name ~= "Mk PM" and (WeaponName.Name ~= "PPK" and (WeaponName.Name ~= "M1911" and (WeaponName.Name ~= "Model 39" and (WeaponName.Name ~= "Python" and (WeaponName.Name ~= "Mauser C96" and (WeaponName.Name ~= "Akimbo G40" and (WeaponName.Name ~= "Akimbo Deagle" and (WeaponName.Name ~= "P08 Luger" and WeaponName.Name ~= "Big Iron")))))))))))))) then
+			table.insert(EmptyTable, WeaponName.Name)
 		end
 	end
 end
-local vu53 = nil
-v45.Main:AddDropdown("", {
+local NilValue = nil
+MainTab.Main:AddDropdown("", {
 	Title = "Gun",
 	Description = "the gun you want to spawn in with\nONLY FAL IS FREE",
-	Values = v47,
+	Values = EmptyTable,
 	Multi = false,
 	Default = 1
-}):OnChanged(function(p54)
-	vu53 = p54
+}):OnChanged(function(Param2)
+	NilValue = Param2
 end)
-v45.Main:AddButton({
+MainTab.Main:AddButton({
 	Title = "Give Gun",
 	Description = "Gives you the gun you selected (deploy to see effects, also saves)\nFAL IS FREE",
 	Callback = function()
-		if vu14 == true or vu53 == "FAL" then
-			game:GetService("Players").LocalPlayer:SetAttribute("Primary", vu53)
+		if IsMikeyHubOwned == true or NilValue == "FAL" then
+			game:GetService("Players").LocalPlayer:SetAttribute("Primary", NilValue)
 		else
-			vu1:Notify({
+			FluentLoader:Notify({
 				Title = "Error.",
 				Content = "You Must Own Premium In Order To Use This.",
 				SubContent = "Join Our Discord To Buy MikeyHub.",
@@ -74,38 +106,38 @@ v45.Main:AddButton({
 		end
 	end
 })
-local v55 = {}
-if vu38.Backpack then
-	local v56, v57, v58 = pairs(game:GetService("ReplicatedStorage").Weapons:GetChildren())
+local Table1 = {}
+if LocalPlayer.Backpack then
+	local WeaponIterator1, WeaponState1, WeaponValue1 = pairs(game:GetService("ReplicatedStorage").Weapons:GetChildren())
 	while true do
-		local v59, v60 = v56(v57, v58)
-		if v59 == nil then
+		local WeaponKey1, WeaponName1 = WeaponIterator1(WeaponState1, WeaponValue1)
+		if WeaponKey1 == nil then
 			break
 		end
-		v58 = v59
-		if v60.Name == "Mk PM" or (v60.Name == "PPK" or (v60.Name == "M1911" or (v60.Name == "Model 39" or (v60.Name == "Python" or (v60.Name == "Mauser C96" or (v60.Name == "Akimbo G40" or (v60.Name == "Akimbo Deagle" or (v60.Name == "P08 Luger" or v60.Name == "Big Iron")))))))) then
-			table.insert(v55, v60.Name)
+		WeaponValue1 = WeaponKey1
+		if WeaponName1.Name == "Mk PM" or (WeaponName1.Name == "PPK" or (WeaponName1.Name == "M1911" or (WeaponName1.Name == "Model 39" or (WeaponName1.Name == "Python" or (WeaponName1.Name == "Mauser C96" or (WeaponName1.Name == "Akimbo G40" or (WeaponName1.Name == "Akimbo Deagle" or (WeaponName1.Name == "P08 Luger" or WeaponName1.Name == "Big Iron")))))))) then
+			table.insert(Table1, WeaponName1.Name)
 		end
 	end
 end
-local vu61 = nil
-v45.Main:AddDropdown("", {
+local NilValue1 = nil
+MainTab.Main:AddDropdown("", {
 	Title = "Secondary Gun",
 	Description = "the gun you want to spawn in with",
-	Values = v55,
+	Values = Table1,
 	Multi = false,
 	Default = 1
-}):OnChanged(function(p62)
-	vu61 = p62
+}):OnChanged(function(Param3)
+	NilValue1 = Param3
 end)
-v45.Main:AddButton({
+MainTab.Main:AddButton({
 	Title = "Give Secondary Gun",
 	Description = "Gives you the gun you selected (deploy to see effects, also saves)\nOnly Python And Mauser Is Premium",
 	Callback = function()
-		if vu61 ~= "Python" or vu61 ~= "Mauser C96" then
-			game:GetService("Players").LocalPlayer:SetAttribute("Secondary", vu61)
+		if NilValue1 ~= "Python" or NilValue1 ~= "Mauser C96" then
+			game:GetService("Players").LocalPlayer:SetAttribute("Secondary", NilValue1)
 		else
-			vu1:Notify({
+			FluentLoader:Notify({
 				Title = "Error.",
 				Content = "You Must Own Premium In Order To Use This (Other Secondarys Are Free).",
 				SubContent = "Join Our Discord To Buy MikeyHub.",
@@ -114,128 +146,128 @@ v45.Main:AddButton({
 		end
 	end
 })
-local v63 = {}
-if vu38.Backpack then
-	local v64, v65, v66 = pairs(game:GetService("ReplicatedStorage").Weapons:GetChildren())
+local Table2 = {}
+if LocalPlayer.Backpack then
+	local WeaponIterator2, WeaponState2, WeaponValue2 = pairs(game:GetService("ReplicatedStorage").Weapons:GetChildren())
 	while true do
-		local v67, v68 = v64(v65, v66)
-		if v67 == nil then
+		local WeaponKey2, WeaponName2 = WeaponIterator2(WeaponState2, WeaponValue2)
+		if WeaponKey2 == nil then
 			break
 		end
-		v66 = v67
-		local v69 = v68
-		if v68.Name == "Combat Knife" or (v68.Name == "Diamond Back" or (v68.Name == "Tanto" or v68.Name == "Karambit")) then
-			table.insert(v63, v69.Name)
+		WeaponValue2 = WeaponKey2
+		local WeaponInfo = WeaponName2
+		if WeaponName2.Name == "Combat Knife" or (WeaponName2.Name == "Diamond Back" or (WeaponName2.Name == "Tanto" or WeaponName2.Name == "Karambit")) then
+			table.insert(Table2, WeaponInfo.Name)
 		end
 	end
 end
-local vu70 = nil
-v45.Main:AddDropdown("", {
+local NilValue2 = nil
+MainTab.Main:AddDropdown("", {
 	Title = "Melee",
 	Description = "the melee you want to spawn in with",
-	Values = v63,
+	Values = Table2,
 	Multi = false,
 	Default = 1
-}):OnChanged(function(p71)
-	vu70 = p71
+}):OnChanged(function(Param4)
+	NilValue2 = Param4
 end)
-v45.Main:AddButton({
+MainTab.Main:AddButton({
 	Title = "Give Melee",
 	Description = "Gives you the melee you selected (deploy to see effects, also saves)\nAll Melees Are Free",
 	Callback = function()
-		game:GetService("Players").LocalPlayer:SetAttribute("Melee", vu70)
+		game:GetService("Players").LocalPlayer:SetAttribute("Melee", NilValue2)
 	end
 })
-v45.Main:AddSection("Player")
-local vu72 = nil
+MainTab.Main:AddSection("Player")
+local NilValue3 = nil
 infJumpDebounce = false
-v45.Main:AddToggle("", {
+MainTab.Main:AddToggle("", {
 	Title = "Infinite Jump",
 	Description = "jump jump jump",
 	Default = false,
-	Callback = function(p73)
-		if p73 == true then
-			vu72 = vu35.JumpRequest:Connect(function()
+	Callback = function(Param5)
+		if Param5 == true then
+			NilValue3 = UserInputService.JumpRequest:Connect(function()
 				if not infJumpDebounce then
 					infJumpDebounce = true
-					vu38.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+					LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
 					wait()
 					infJumpDebounce = false
 				end
 			end)
 		else
-			if vu72 then
-				vu72:Disconnect()
+			if NilValue3 then
+				NilValue3:Disconnect()
 			end
 			infJumpDebounce = false
 		end
 	end
 })
-local vu74 = game:GetService("RunService")
+local RunService = game:GetService("RunService")
 swimming = false
-local vu75 = workspace.Gravity
-local vu76 = nil
-v45.Main:AddToggle("", {
+local Gravity = workspace.Gravity
+local NilValue4 = nil
+MainTab.Main:AddToggle("", {
 	Title = "Air Swim",
 	Description = "Allows you to swim in the air.",
 	Default = false,
-	Callback = function(p77)
-		if p77 == true then
-			if not swimming and (vu38 and vu38.Character) and vu38.Character:FindFirstChildWhichIsA("Humanoid") then
-				vu75 = workspace.Gravity
+	Callback = function(Param6)
+		if Param6 == true then
+			if not swimming and (LocalPlayer and LocalPlayer.Character) and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
+				Gravity = workspace.Gravity
 				workspace.Gravity = 0
-				local function v78()
-					workspace.Gravity = vu75
+				local function Function4()
+					workspace.Gravity = Gravity
 					swimming = false
 				end
-				local vu79 = vu38.Character:FindFirstChildWhichIsA("Humanoid")
-				gravReset = vu79.Died:Connect(v78)
-				local v80 = Enum.HumanoidStateType:GetEnumItems()
-				table.remove(v80, table.find(v80, Enum.HumanoidStateType.None))
-				local v81, v82, v83 = pairs(v80)
+				local Humanoid = LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+				gravReset = Humanoid.Died:Connect(Function4)
+				local HumanoidStates = Enum.HumanoidStateType:GetEnumItems()
+				table.remove(HumanoidStates, table.find(HumanoidStates, Enum.HumanoidStateType.None))
+				local HumanoidStateIterator, HumanoidStateState, HumanoidStateValue = pairs(HumanoidStates)
 				while true do
-					local v84
-					v83, v84 = v81(v82, v83)
-					if v83 == nil then
+					local UnusedVariable
+					HumanoidStateValue, UnusedVariable = HumanoidStateIterator(HumanoidStateState, HumanoidStateValue)
+					if HumanoidStateValue == nil then
 						break
 					end
-					vu79:SetStateEnabled(v84, false)
+					Humanoid:SetStateEnabled(UnusedVariable, false)
 				end
-				vu79:ChangeState(Enum.HumanoidStateType.Swimming)
-				vu76 = vu74.Heartbeat:Connect(function()
+				Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
+				NilValue4 = RunService.Heartbeat:Connect(function()
 					pcall(function()
-						vu38.Character.HumanoidRootPart.Velocity = (vu79.MoveDirection ~= Vector3.new() or vu35:IsKeyDown(Enum.KeyCode.Space)) and vu38.Character.HumanoidRootPart.Velocity or Vector3.new()
+						LocalPlayer.Character.HumanoidRootPart.Velocity = (Humanoid.MoveDirection ~= Vector3.new() or UserInputService:IsKeyDown(Enum.KeyCode.Space)) and LocalPlayer.Character.HumanoidRootPart.Velocity or Vector3.new()
 					end)
 				end)
 				swimming = true
 			end
-		elseif vu38 and vu38.Character and vu38.Character:FindFirstChildWhichIsA("Humanoid") then
-			workspace.Gravity = vu75
+		elseif LocalPlayer and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") then
+			workspace.Gravity = Gravity
 			swimming = false
 			if gravReset then
 				gravReset:Disconnect()
 			end
-			if vu76 ~= nil then
-				vu76:Disconnect()
-				vu76 = nil
+			if NilValue4 ~= nil then
+				NilValue4:Disconnect()
+				NilValue4 = nil
 			end
-			local v85 = vu38.Character:FindFirstChildWhichIsA("Humanoid")
-			local v86 = Enum.HumanoidStateType:GetEnumItems()
-			table.remove(v86, table.find(v86, Enum.HumanoidStateType.None))
-			local v87, v88, v89 = pairs(v86)
+			local Humanoid1 = LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+			local HumanoidStates1 = Enum.HumanoidStateType:GetEnumItems()
+			table.remove(HumanoidStates1, table.find(HumanoidStates1, Enum.HumanoidStateType.None))
+			local HumanoidStateIterator1, HumanoidStateState1, HumanoidStateValue1 = pairs(HumanoidStates1)
 			while true do
-				local v90
-				v89, v90 = v87(v88, v89)
-				if v89 == nil then
+				local UnusedVariable1
+				HumanoidStateValue1, UnusedVariable1 = HumanoidStateIterator1(HumanoidStateState1, HumanoidStateValue1)
+				if HumanoidStateValue1 == nil then
 					break
 				end
-				v85:SetStateEnabled(v90, true)
+				Humanoid1:SetStateEnabled(UnusedVariable1, true)
 			end
 		end
 	end
 })
-v45.Main:AddSection("Streak Changer")
-local v91 = v45.Main:AddDropdown("", {
+MainTab.Main:AddSection("Streak Changer")
+local Streak1 = MainTab.Main:AddDropdown("", {
 	Title = "Streak1",
 	Description = "Basically unlock all for streaks\nyou can give yourself streaks that you don\'t own\nReset after deploying to see effects",
 	Values = {
@@ -252,7 +284,7 @@ local v91 = v45.Main:AddDropdown("", {
 	Multi = false,
 	Default = 1
 })
-local v92 = v45.Main:AddDropdown("", {
+local Streak2 = MainTab.Main:AddDropdown("", {
 	Title = "Streak2",
 	Description = "Basically unlock all for streaks\nyou can give yourself streaks that you don\'t own\nReset after deploying to see effects",
 	Values = {
@@ -269,7 +301,7 @@ local v92 = v45.Main:AddDropdown("", {
 	Multi = false,
 	Default = 1
 })
-local v93 = v45.Main:AddDropdown("", {
+local Streak3 = MainTab.Main:AddDropdown("", {
 	Title = "Streak3",
 	Description = "Basically unlock all for streaks\nyou can give yourself streaks that you don\'t own\nReset after deploying to see effects",
 	Values = {
@@ -286,7 +318,7 @@ local v93 = v45.Main:AddDropdown("", {
 	Multi = false,
 	Default = 1
 })
-local v94 = v45.Main:AddDropdown("", {
+local Streak4 = MainTab.Main:AddDropdown("", {
 	Title = "Streak4",
 	Description = "Basically unlock all for streaks\nyou can give yourself streaks that you don\'t own\nReset after deploying to see effects",
 	Values = {
@@ -303,35 +335,35 @@ local v94 = v45.Main:AddDropdown("", {
 	Multi = false,
 	Default = 1
 })
-v91:OnChanged(function(p95)
-	if vu46 == true then
-		game:GetService("Players").LocalPlayer:SetAttribute("Streak1", p95)
+Streak1:OnChanged(function(Param7)
+	if BooleanValue == true then
+		game:GetService("Players").LocalPlayer:SetAttribute("Streak1", Param7)
 	end
 end)
-v92:OnChanged(function(p96)
-	if vu46 == true then
-		game:GetService("Players").LocalPlayer:SetAttribute("Streak2", p96)
+Streak2:OnChanged(function(Param8)
+	if BooleanValue == true then
+		game:GetService("Players").LocalPlayer:SetAttribute("Streak2", Param8)
 	end
 end)
-v93:OnChanged(function(p97)
-	if vu46 == true then
-		game:GetService("Players").LocalPlayer:SetAttribute("Streak3", p97)
+Streak3:OnChanged(function(Param9)
+	if BooleanValue == true then
+		game:GetService("Players").LocalPlayer:SetAttribute("Streak3", Param9)
 	end
 end)
-v94:OnChanged(function(p98)
-	if vu46 == true then
-		game:GetService("Players").LocalPlayer:SetAttribute("Streak4", p98)
+Streak4:OnChanged(function(Param10)
+	if BooleanValue == true then
+		game:GetService("Players").LocalPlayer:SetAttribute("Streak4", Param10)
 	end
 end)
-v45.GunMods:AddSection("Gun Mods")
-v45.GunMods:AddButton({
+MainTab.GunMods:AddSection("Gun Mods")
+MainTab.GunMods:AddButton({
 	Title = "Infinite Ammo",
 	Description = "ammo me 99999 (it works but it may be inconsistent).",
 	Callback = function()
-		local v99 = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Upbolt/Hydroxide/revision/ohaux.lua"))()
-		local v100 = game:GetService("Players").LocalPlayer.PlayerScripts.Vortex
-		local v101 = 2
-		local v102 = v99.searchClosure(v100, "Unnamed function", v101, {
+		local ScriptLoader = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Upbolt/Hydroxide/revision/ohaux.lua"))()
+		local LocalPlayerScript = game:GetService("Players").LocalPlayer.PlayerScripts.Vortex
+		local SearchCount = 2
+		local SearchResult = ScriptLoader.searchClosure(LocalPlayerScript, "Unnamed function", SearchCount, {
 			"Parent",
 			"Name",
 			"MGL",
@@ -339,21 +371,21 @@ v45.GunMods:AddButton({
 			2,
 			"Variables"
 		})
-		local v103 = 999999
-		if v102 == "?" then
-			return vu1:Notify({
+		local MaxResults = 999999
+		if SearchResult == "?" then
+			return FluentLoader:Notify({
 				Title = "Error.",
 				Content = "Failed to edit gun stats",
 				SubContent = "",
 				Duration = 5
 			})
 		end
-		debug.setupvalue(v102, v101, v103)
+		debug.setupvalue(SearchResult, SearchCount, MaxResults)
 		task.wait(0.1)
-		local v104 = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Upbolt/Hydroxide/revision/ohaux.lua"))()
-		local v105 = game:GetService("Players").LocalPlayer.PlayerScripts.Vortex
-		local v106 = 11
-		local v107 = v104.searchClosure(v105, "Unnamed function", v106, {
+		local ScriptLoader1 = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Upbolt/Hydroxide/revision/ohaux.lua"))()
+		local LocalPlayerScript1 = game:GetService("Players").LocalPlayer.PlayerScripts.Vortex
+		local SearchLimit = 11
+		local SearchResult1 = ScriptLoader1.searchClosure(LocalPlayerScript1, "Unnamed function", SearchLimit, {
 			[1] = "Parent",
 			[2] = "Name",
 			[3] = "script",
@@ -361,38 +393,38 @@ v45.GunMods:AddButton({
 			[6] = "Offset",
 			[7] = "Value"
 		})
-		local v108 = 999999
-		if v107 == "?" then
-			return vu1:Notify({
+		local MaxResults1 = 999999
+		if SearchResult1 == "?" then
+			return FluentLoader:Notify({
 				Title = "Error.",
 				Content = "Failed to edit gun stats",
 				SubContent = "",
 				Duration = 5
 			})
 		end
-		debug.setupvalue(v107, v106, v108)
+		debug.setupvalue(SearchResult1, SearchLimit, MaxResults1)
 	end
 })
-v45.GunMods:AddSlider("Slider", {
+MainTab.GunMods:AddSlider("Slider", {
 	Title = "FireRate",
 	Description = "Change how fast your gun shoots. (might break gun if too high)",
 	Default = 700,
 	Min = 1,
 	Max = 5000,
 	Rounding = 0.1,
-	Callback = function(p109)
-		if vu14 ~= true then
-			vu1:Notify({
+	Callback = function(Parameter)
+		if IsMikeyHubOwned ~= true then
+			FluentLoader:Notify({
 				Title = "Error.",
 				Content = "You Must Own Premium In Order To Use This.",
 				SubContent = "Join Our Discord To Buy MikeyHub.",
 				Duration = 5
 			})
 		else
-			local v110 = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Upbolt/Hydroxide/revision/ohaux.lua"))()
-			local v111 = game:GetService("Players").LocalPlayer.PlayerScripts.Vortex
-			local v112 = 4
-			local v113 = v110.searchClosure(v111, "GatherWeaponData", v112, {
+			local ScriptLoader2 = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Upbolt/Hydroxide/revision/ohaux.lua"))()
+			local LocalPlayerScript2 = game:GetService("Players").LocalPlayer.PlayerScripts.Vortex
+			local DataCount = 4
+			local DataResult = ScriptLoader2.searchClosure(LocalPlayerScript2, "GatherWeaponData", DataCount, {
 				"Animations",
 				"FOV",
 				"FindFirstChild",
@@ -400,22 +432,22 @@ v45.GunMods:AddSlider("Slider", {
 				"NewSight",
 				"NewSightLine"
 			})
-			if v113 == "?" then
-				return vu1:Notify({
+			if DataResult == "?" then
+				return FluentLoader:Notify({
 					Title = "Error.",
 					Content = "Failed to edit gun stats",
 					SubContent = "",
 					Duration = 5
 				})
 			end
-			debug.setupvalue(v113, v112, p109)
+			debug.setupvalue(DataResult, DataCount, Parameter)
 		end
 	end
 })
-local v114 = vu38
-vu38.GetAttribute(v114, "Primary")
-v45.GunMods:AddSection("Gun Skin")
-local v115 = v45.GunMods:AddDropdown("Dropdown", {
+local PreviousValue = LocalPlayer
+LocalPlayer.GetAttribute(PreviousValue, "Primary")
+MainTab.GunMods:AddSection("Gun Skin")
+local DropdownItem = MainTab.GunMods:AddDropdown("Dropdown", {
 	Title = "Skin",
 	Description = "",
 	Values = {
@@ -437,37 +469,37 @@ local v115 = v45.GunMods:AddDropdown("Dropdown", {
 	Multi = false,
 	Default = 1
 })
-local function vu124(p116, p117, p118)
-	local v119 = workspace:FindFirstChild("ViewModel")
-	if v119 and v119:FindFirstChild("Gun") then
+local function Function1(Param1, Param2, Param3)
+	local ViewModel = workspace:FindFirstChild("ViewModel")
+	if ViewModel and ViewModel:FindFirstChild("Gun") then
 		if false then
-			vu1:Notify({
+			FluentLoader:Notify({
 				Title = "Error.",
 				Content = "You must have any random camo in order to use this due to anticheat detections (recommended blue)",
 				SubContent = "",
 				Duration = 5
 			})
 		else
-			local v120, v121, v122 = ipairs(v119.Gun:GetChildren())
+			local Child1, Child2, Child3 = ipairs(ViewModel.Gun:GetChildren())
 			while true do
-				local v123
-				v122, v123 = v120(v121, v122)
-				if v122 == nil then
+				local UnknownValue
+				Child3, UnknownValue = Child1(Child2, Child3)
+				if Child3 == nil then
 					break
 				end
-				if v123:FindFirstChild("Camo") then
-					v123.MaterialVariant = p116
-					if p117 and p117 ~= "" then
-						v123.BrickColor = p117
+				if UnknownValue:FindFirstChild("Camo") then
+					UnknownValue.MaterialVariant = Param1
+					if Param2 and Param2 ~= "" then
+						UnknownValue.BrickColor = Param2
 					end
-					if p118 and p118 ~= "" then
-						v123.Color = p118
+					if Param3 and Param3 ~= "" then
+						UnknownValue.Color = Param3
 					end
 				end
 			end
 		end
 	else
-		vu1:Notify({
+		FluentLoader:Notify({
 			Title = "Error.",
 			Content = "You must be ingame in order to use this.",
 			SubContent = "",
@@ -475,209 +507,209 @@ local function vu124(p116, p117, p118)
 		})
 	end
 end
-local vu125 = ""
-v115:OnChanged(function(p126)
-	vu125 = p126
+local EmptyString = ""
+DropdownItem:OnChanged(function(Parameter1)
+	EmptyString = Parameter1
 end)
-v45.GunMods:AddButton({
+MainTab.GunMods:AddButton({
 	Title = "Change Skin",
 	Description = "Changes skin/camo to selected value in dropdown",
 	Callback = function()
-		if vu125 ~= "" then
-			if vu125 ~= "Navy" then
-				if vu125 ~= "Wildfire" then
-					if vu125 ~= "Ice" then
-						if vu125 ~= "Hearts" then
-							if vu125 ~= "Miami Tiger" then
-								if vu125 ~= "Damascus" then
-									if vu125 ~= "Gold" then
-										if vu125 ~= "Haptic" then
-											if vu125 ~= "Blackout" then
-												if vu125 ~= "Blossom" then
-													if vu125 ~= "Warrior" then
-														if vu125 ~= "Freedom" then
-															if vu125 ~= "Dark Matter" then
-																if vu125 == "Volcanic (Free)" then
-																	vu38:SetAttribute("PrimaryCamo", "Volcanic")
-																	vu1:Notify({
+		if EmptyString ~= "" then
+			if EmptyString ~= "Navy" then
+				if EmptyString ~= "Wildfire" then
+					if EmptyString ~= "Ice" then
+						if EmptyString ~= "Hearts" then
+							if EmptyString ~= "Miami Tiger" then
+								if EmptyString ~= "Damascus" then
+									if EmptyString ~= "Gold" then
+										if EmptyString ~= "Haptic" then
+											if EmptyString ~= "Blackout" then
+												if EmptyString ~= "Blossom" then
+													if EmptyString ~= "Warrior" then
+														if EmptyString ~= "Freedom" then
+															if EmptyString ~= "Dark Matter" then
+																if EmptyString == "Volcanic (Free)" then
+																	LocalPlayer:SetAttribute("PrimaryCamo", "Volcanic")
+																	FluentLoader:Notify({
 																		Title = "Success!",
 																		Content = "Reset to see affects (if you have default camo equipped)",
 																		SubContent = "",
 																		Duration = 5
 																	})
 																end
-															elseif vu14 ~= true then
-																vu1:Notify({
+															elseif IsMikeyHubOwned ~= true then
+																FluentLoader:Notify({
 																	Title = "Error.",
 																	Content = "You Must Own Premium In Order To Use This.",
 																	SubContent = "Join Our Discord To Buy MikeyHub.",
 																	Duration = 5
 																})
 															else
-																vu38:SetAttribute("PrimaryCamo", "Dark Matter")
-																vu1:Notify({
+																LocalPlayer:SetAttribute("PrimaryCamo", "Dark Matter")
+																FluentLoader:Notify({
 																	Title = "Success!",
 																	Content = "Reset to see affects (if you have default camo equipped)",
 																	SubContent = "",
 																	Duration = 5
 																})
 															end
-														elseif vu14 ~= true then
-															vu1:Notify({
+														elseif IsMikeyHubOwned ~= true then
+															FluentLoader:Notify({
 																Title = "Error.",
 																Content = "You Must Own Premium In Order To Use This.",
 																SubContent = "Join Our Discord To Buy MikeyHub.",
 																Duration = 5
 															})
 														else
-															local v127 = game:GetService("ReplicatedStorage").Camos.Freedom
-															vu124("FreedomCamo", v127.BrickColor, v127.Color)
-															vu38:SetAttribute("PrimaryCamo", "Freedom")
-															vu1:Notify({
+															local Camo1 = game:GetService("ReplicatedStorage").Camos.Freedom
+															Function1("FreedomCamo", Camo1.BrickColor, Camo1.Color)
+															LocalPlayer:SetAttribute("PrimaryCamo", "Freedom")
+															FluentLoader:Notify({
 																Title = "Success!",
 																Content = "Reset to see affects (if you have default camo equipped)",
 																SubContent = "",
 																Duration = 5
 															})
 														end
-													elseif vu14 ~= true then
-														vu1:Notify({
+													elseif IsMikeyHubOwned ~= true then
+														FluentLoader:Notify({
 															Title = "Error.",
 															Content = "You Must Own Premium In Order To Use This.",
 															SubContent = "Join Our Discord To Buy MikeyHub.",
 															Duration = 5
 														})
 													else
-														local v128 = game:GetService("ReplicatedStorage").Camos.Warrior
-														vu124("CAMOWarrior", v128.BrickColor, v128.Color)
-														vu38:SetAttribute("PrimaryCamo", "Warrior")
-														vu1:Notify({
+														local Camo2 = game:GetService("ReplicatedStorage").Camos.Warrior
+														Function1("CAMOWarrior", Camo2.BrickColor, Camo2.Color)
+														LocalPlayer:SetAttribute("PrimaryCamo", "Warrior")
+														FluentLoader:Notify({
 															Title = "Success!",
 															Content = "Reset to see affects (if you have default camo equipped)",
 															SubContent = "",
 															Duration = 5
 														})
 													end
-												elseif vu14 ~= true then
-													vu1:Notify({
+												elseif IsMikeyHubOwned ~= true then
+													FluentLoader:Notify({
 														Title = "Error.",
 														Content = "You Must Own Premium In Order To Use This.",
 														SubContent = "Join Our Discord To Buy MikeyHub.",
 														Duration = 5
 													})
 												else
-													local v129 = game:GetService("ReplicatedStorage").Camos.Blossom
-													vu124("BlossomCamo", v129.BrickColor, v129.Color)
-													vu38:SetAttribute("PrimaryCamo", "Blossom")
-													vu1:Notify({
+													local Camo3 = game:GetService("ReplicatedStorage").Camos.Blossom
+													Function1("BlossomCamo", Camo3.BrickColor, Camo3.Color)
+													LocalPlayer:SetAttribute("PrimaryCamo", "Blossom")
+													FluentLoader:Notify({
 														Title = "Success!",
 														Content = "Reset to see affects (if you have default camo equipped)",
 														SubContent = "",
 														Duration = 5
 													})
 												end
-											elseif vu14 ~= true then
-												vu1:Notify({
+											elseif IsMikeyHubOwned ~= true then
+												FluentLoader:Notify({
 													Title = "Error.",
 													Content = "You Must Own Premium In Order To Use This.",
 													SubContent = "Join Our Discord To Buy MikeyHub.",
 													Duration = 5
 												})
 											else
-												local v130 = game:GetService("MaterialService").BlackoutCamo
-												vu124("BlackoutCamo", v130.BrickColor, v130.Color)
-												vu38:SetAttribute("PrimaryCamo", "Blackout")
-												vu1:Notify({
+												local BlackoutCamo = game:GetService("MaterialService").BlackoutCamo
+												Function1("BlackoutCamo", BlackoutCamo.BrickColor, BlackoutCamo.Color)
+												LocalPlayer:SetAttribute("PrimaryCamo", "Blackout")
+												FluentLoader:Notify({
 													Title = "Success!",
 													Content = "Reset to see affects (if you have default camo equipped)",
 													SubContent = "",
 													Duration = 5
 												})
 											end
-										elseif vu14 ~= true then
-											vu1:Notify({
+										elseif IsMikeyHubOwned ~= true then
+											FluentLoader:Notify({
 												Title = "Error.",
 												Content = "You Must Own Premium In Order To Use This.",
 												SubContent = "Join Our Discord To Buy MikeyHub.",
 												Duration = 5
 											})
 										else
-											local v131 = game:GetService("ReplicatedStorage").Camos.Haptic
-											vu124("HapticCamo", v131.BrickColor, v131.Color)
-											vu38:SetAttribute("PrimaryCamo", "Haptic")
-											vu1:Notify({
+											local Camo4 = game:GetService("ReplicatedStorage").Camos.Haptic
+											Function1("HapticCamo", Camo4.BrickColor, Camo4.Color)
+											LocalPlayer:SetAttribute("PrimaryCamo", "Haptic")
+											FluentLoader:Notify({
 												Title = "Success!",
 												Content = "Reset to see affects (if you have default camo equipped)",
 												SubContent = "",
 												Duration = 5
 											})
 										end
-									elseif vu14 ~= true then
-										vu1:Notify({
+									elseif IsMikeyHubOwned ~= true then
+										FluentLoader:Notify({
 											Title = "Error.",
 											Content = "You Must Own Premium In Order To Use This.",
 											SubContent = "Join Our Discord To Buy MikeyHub.",
 											Duration = 5
 										})
 									else
-										local v132 = game:GetService("ReplicatedStorage").Camos.Gold
-										vu124("CAMOGoldMain", v132.BrickColor, v132.Color)
-										vu38:SetAttribute("PrimaryCamo", "Gold")
-										vu1:Notify({
+										local Camo5 = game:GetService("ReplicatedStorage").Camos.Gold
+										Function1("CAMOGoldMain", Camo5.BrickColor, Camo5.Color)
+										LocalPlayer:SetAttribute("PrimaryCamo", "Gold")
+										FluentLoader:Notify({
 											Title = "Success!",
 											Content = "Reset to see affects (if you have default camo equipped)",
 											SubContent = "",
 											Duration = 5
 										})
 									end
-								elseif vu14 ~= true then
-									vu1:Notify({
+								elseif IsMikeyHubOwned ~= true then
+									FluentLoader:Notify({
 										Title = "Error.",
 										Content = "You Must Own Premium In Order To Use This.",
 										SubContent = "Join Our Discord To Buy MikeyHub.",
 										Duration = 5
 									})
 								else
-									local v133 = game:GetService("ReplicatedStorage").Camos.Damascus
-									vu124("DamascusCamo", v133.BrickColor, v133.Color)
-									vu38:SetAttribute("PrimaryCamo", "Damascus")
-									vu1:Notify({
+									local Camo6 = game:GetService("ReplicatedStorage").Camos.Damascus
+									Function1("DamascusCamo", Camo6.BrickColor, Camo6.Color)
+									LocalPlayer:SetAttribute("PrimaryCamo", "Damascus")
+									FluentLoader:Notify({
 										Title = "Success!",
 										Content = "Reset to see affects (if you have default camo equipped)",
 										SubContent = "",
 										Duration = 5
 									})
 								end
-							elseif vu14 ~= true then
-								vu1:Notify({
+							elseif IsMikeyHubOwned ~= true then
+								FluentLoader:Notify({
 									Title = "Error.",
 									Content = "You Must Own Premium In Order To Use This.",
 									SubContent = "Join Our Discord To Buy MikeyHub.",
 									Duration = 5
 								})
 							else
-								local v134 = game:GetService("ReplicatedStorage").Camos["Miami Tiger"]
-								vu124("MiamiTigerCamo", v134.BrickColor, v134.Color)
-								vu38:SetAttribute("PrimaryCamo", "Miami Tiger")
-								vu1:Notify({
+								local Camo7 = game:GetService("ReplicatedStorage").Camos["Miami Tiger"]
+								Function1("MiamiTigerCamo", Camo7.BrickColor, Camo7.Color)
+								LocalPlayer:SetAttribute("PrimaryCamo", "Miami Tiger")
+								FluentLoader:Notify({
 									Title = "Success!",
 									Content = "Reset to see affects (if you have default camo equipped)",
 									SubContent = "",
 									Duration = 5
 								})
 							end
-						elseif vu14 ~= true then
-							vu1:Notify({
+						elseif IsMikeyHubOwned ~= true then
+							FluentLoader:Notify({
 								Title = "Error.",
 								Content = "You Must Own Premium In Order To Use This.",
 								SubContent = "Join Our Discord To Buy MikeyHub.",
 								Duration = 5
 							})
 						else
-							local v135 = game:GetService("ReplicatedStorage").Camos.Hearts
-							vu124("CAMOHearts", v135.BrickColor, v135.Color)
-							vu38:SetAttribute("PrimaryCamo", "Hearts")
-							vu1:Notify({
+							local Camo8 = game:GetService("ReplicatedStorage").Camos.Hearts
+							Function1("CAMOHearts", Camo8.BrickColor, Camo8.Color)
+							LocalPlayer:SetAttribute("PrimaryCamo", "Hearts")
+							FluentLoader:Notify({
 								Title = "Success!",
 								Content = "Reset to see affects (if you have default camo equipped)",
 								SubContent = "",
@@ -685,10 +717,10 @@ v45.GunMods:AddButton({
 							})
 						end
 					else
-						local v136 = game:GetService("ReplicatedStorage").Camos.Ice
-						vu124("IceCamo", v136.BrickColor, v136.Color)
-						vu38:SetAttribute("PrimaryCamo", "Ice")
-						vu1:Notify({
+						local Camo9 = game:GetService("ReplicatedStorage").Camos.Ice
+						Function1("IceCamo", Camo9.BrickColor, Camo9.Color)
+						LocalPlayer:SetAttribute("PrimaryCamo", "Ice")
+						FluentLoader:Notify({
 							Title = "Success!",
 							Content = "Reset to see affects (if you have default camo equipped)",
 							SubContent = "",
@@ -696,9 +728,9 @@ v45.GunMods:AddButton({
 						})
 					end
 				else
-					vu124("WildfireCamo")
-					vu38:SetAttribute("PrimaryCamo", "Wildfire")
-					vu1:Notify({
+					Function1("WildfireCamo")
+					LocalPlayer:SetAttribute("PrimaryCamo", "Wildfire")
+					FluentLoader:Notify({
 						Title = "Success!",
 						Content = "Reset to see affects (if you have default camo equipped)",
 						SubContent = "",
@@ -706,9 +738,9 @@ v45.GunMods:AddButton({
 					})
 				end
 			else
-				vu124("NavyCamo")
-				vu38:SetAttribute("PrimaryCamo", "Navy")
-				vu1:Notify({
+				Function1("NavyCamo")
+				LocalPlayer:SetAttribute("PrimaryCamo", "Navy")
+				FluentLoader:Notify({
 					Title = "Success!",
 					Content = "Reset to see affects (if you have default camo equipped)",
 					SubContent = "",
@@ -716,7 +748,7 @@ v45.GunMods:AddButton({
 				})
 			end
 		else
-			vu1:Notify({
+			FluentLoader:Notify({
 				Title = "Error.",
 				Content = "You must select a skin in order to use this.",
 				SubContent = "",
@@ -725,8 +757,8 @@ v45.GunMods:AddButton({
 		end
 	end
 })
-v45.GunMods:AddSection("Hit Sound")
-local v137 = v45.GunMods:AddDropdown("Dropdown", {
+MainTab.GunMods:AddSection("Hit Sound")
+local SoundOption = MainTab.GunMods:AddDropdown("Dropdown", {
 	Title = "Sound",
 	Description = "",
 	Values = {
@@ -737,7 +769,7 @@ local v137 = v45.GunMods:AddDropdown("Dropdown", {
 	Multi = false,
 	Default = 1
 })
-local vu138 = {
+local AudioSettings = {
 	ArmHit = game:GetService("Players").LocalPlayer.PlayerScripts.Vortex.Audio.UI.ArmHit,
 	HeadHit = game:GetService("Players").LocalPlayer.PlayerScripts.Vortex.Audio.UI.HeadHit,
 	LegHit = game:GetService("Players").LocalPlayer.PlayerScripts.Vortex.Audio.UI.LegHit,
@@ -749,97 +781,97 @@ local vu138 = {
 	LowerUi = game:GetService("StarterPlayer").StarterPlayerScripts.Vortex.Audio.UI.LowerTorsoHit,
 	UpperUi = game:GetService("StarterPlayer").StarterPlayerScripts.Vortex.Audio.UI.UpperTorsoHit
 }
-local v139 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("ArmHit")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
-if v139 then
-	v139 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("ArmHit")
+local HudCheck = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("ArmHit")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
+if HudCheck then
+	HudCheck = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("ArmHit")
 end
-vu138.ArmHitCode = v139
-local v140 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("HeadHit")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
-if v140 then
-	v140 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("HeadHit")
+AudioSettings.ArmHitCode = HudCheck
+local HudCheck1 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("HeadHit")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
+if HudCheck1 then
+	HudCheck1 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("HeadHit")
 end
-vu138.HeadHitCode = v140
-local v141 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("LegHit")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
-if v141 then
-	v141 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("LegHit")
+AudioSettings.HeadHitCode = HudCheck1
+local HudCheck2 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("LegHit")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
+if HudCheck2 then
+	HudCheck2 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("LegHit")
 end
-vu138.LegHitCode = v141
-local v142 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("LowerTorsoHit")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
-if v142 then
-	v142 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("LowerTorsoHit")
+AudioSettings.LegHitCode = HudCheck2
+local HudCheck3 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("LowerTorsoHit")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
+if HudCheck3 then
+	HudCheck3 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("LowerTorsoHit")
 end
-vu138.LowerCode = v142
-local v143 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("UpperTorsoHit")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
-if v143 then
-	v143 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("UpperTorsoHit")
+AudioSettings.LowerCode = HudCheck3
+local HudCheck4 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("UpperTorsoHit")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
+if HudCheck4 then
+	HudCheck4 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("UpperTorsoHit")
 end
-vu138.UpperCode = v143
-v137:OnChanged(function(p144)
-	if p144 == "Default" then
-		vu138.ArmHit.SoundId = "rbxassetid://6062254646"
-		vu138.HeadHit.SoundId = "rbxassetid://6062253602"
-		vu138.LegHit.SoundId = "rbxassetid://6062254394"
-		vu138.Lower.SoundId = "rbxassetid://6062254394"
-		vu138.Upper.SoundId = "rbxassetid://6062253829"
-		vu138.ArmHitUi.SoundId = "rbxassetid://6062254646"
-		vu138.HeadHitUi.SoundId = "rbxassetid://6062253602"
-		vu138.LegHit.SoundId = "rbxassetid://6062254394"
-		vu138.LowerUi.SoundId = "rbxassetid://6062254394"
-		vu138.UpperUi.SoundId = "rbxassetid://6062253829"
-		vu138.ArmHitCode.SoundId = "rbxassetid://6062254646"
-		vu138.HeadHitCode.SoundId = "rbxassetid://6062253602"
-		vu138.LegHitCode.SoundId = "rbxassetid://6062254394"
-		vu138.LowerCode.SoundId = "rbxassetid://6062254394"
-		vu138.UpperCode.SoundId = "rbxassetid://6062253829"
-	elseif p144 == "Minecraft" then
-		local v145, v146, v147 = pairs(vu138)
+AudioSettings.UpperCode = HudCheck4
+SoundOption:OnChanged(function(Param4)
+	if Param4 == "Default" then
+		AudioSettings.ArmHit.SoundId = "rbxassetid://6062254646"
+		AudioSettings.HeadHit.SoundId = "rbxassetid://6062253602"
+		AudioSettings.LegHit.SoundId = "rbxassetid://6062254394"
+		AudioSettings.Lower.SoundId = "rbxassetid://6062254394"
+		AudioSettings.Upper.SoundId = "rbxassetid://6062253829"
+		AudioSettings.ArmHitUi.SoundId = "rbxassetid://6062254646"
+		AudioSettings.HeadHitUi.SoundId = "rbxassetid://6062253602"
+		AudioSettings.LegHit.SoundId = "rbxassetid://6062254394"
+		AudioSettings.LowerUi.SoundId = "rbxassetid://6062254394"
+		AudioSettings.UpperUi.SoundId = "rbxassetid://6062253829"
+		AudioSettings.ArmHitCode.SoundId = "rbxassetid://6062254646"
+		AudioSettings.HeadHitCode.SoundId = "rbxassetid://6062253602"
+		AudioSettings.LegHitCode.SoundId = "rbxassetid://6062254394"
+		AudioSettings.LowerCode.SoundId = "rbxassetid://6062254394"
+		AudioSettings.UpperCode.SoundId = "rbxassetid://6062253829"
+	elseif Param4 == "Minecraft" then
+		local AudioKey, AudioValue, AudioPair = pairs(AudioSettings)
 		while true do
-			local v148
-			v147, v148 = v145(v146, v147)
-			if v147 == nil then
+			local UnknownValue1
+			AudioPair, UnknownValue1 = AudioKey(AudioValue, AudioPair)
+			if AudioPair == nil then
 				break
 			end
-			v148.SoundId = "rbxassetid://8766809464"
+			UnknownValue1.SoundId = "rbxassetid://8766809464"
 		end
-	elseif p144 == "Fortnite Shotgun" then
-		local v149, v150, v151 = pairs(vu138)
+	elseif Param4 == "Fortnite Shotgun" then
+		local AudioKey1, AudioValue1, AudioPair1 = pairs(AudioSettings)
 		while true do
-			local v152
-			v151, v152 = v149(v150, v151)
-			if v151 == nil then
+			local UnknownValue2
+			AudioPair1, UnknownValue2 = AudioKey1(AudioValue1, AudioPair1)
+			if AudioPair1 == nil then
 				break
 			end
-			v152.SoundId = "rbxassetid://4804954860"
+			UnknownValue2.SoundId = "rbxassetid://4804954860"
 		end
 	end
 end)
-v45.GunMods:AddInput("", {
+MainTab.GunMods:AddInput("", {
 	Title = "Custom Sound",
 	Description = "Get it from the marketplace\n(paste the numbers in url into here)",
 	Default = "",
 	Placeholder = "",
 	Numeric = true,
 	Finished = false,
-	Callback = function(p153)
-		local v154, v155, v156 = pairs(vu138)
+	Callback = function(Param5)
+		local AudioKey2, AudioValue2, AudioPair2 = pairs(AudioSettings)
 		while true do
-			local v157
-			v156, v157 = v154(v155, v156)
-			if v156 == nil then
+			local UnknownValue3
+			AudioPair2, UnknownValue3 = AudioKey2(AudioValue2, AudioPair2)
+			if AudioPair2 == nil then
 				break
 			end
-			v157.SoundId = "rbxassetid://" .. p153
+			UnknownValue3.SoundId = "rbxassetid://" .. Param5
 		end
 	end
 })
-v45.GunMods:AddSection("Kill Sound")
-local vu158 = {}
-local v159 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("Kill")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
-if v159 then
-	v159 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("Kill")
+MainTab.GunMods:AddSection("Kill Sound")
+local Settings = {}
+local HudCheck5 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("Kill")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
+if HudCheck5 then
+	HudCheck5 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("Kill")
 end
-vu158.KillSound = v159
-v45.GunMods:AddDropdown("Dropdown", {
+Settings.KillSound = HudCheck5
+MainTab.GunMods:AddDropdown("Dropdown", {
 	Title = "Sound",
 	Description = "",
 	Values = {
@@ -852,92 +884,92 @@ v45.GunMods:AddDropdown("Dropdown", {
 	},
 	Multi = false,
 	Default = 1
-}):OnChanged(function(p160)
-	if p160 == "Default" then
-		vu158.KillSound.SoundId = "rbxassetid://2523782146"
-	elseif p160 == "Fortnite Down" then
-		local v161, v162, v163 = pairs(vu158)
+}):OnChanged(function(Param6)
+	if Param6 == "Default" then
+		Settings.KillSound.SoundId = "rbxassetid://2523782146"
+	elseif Param6 == "Fortnite Down" then
+		local SettingKey, SettingValue, SettingPair = pairs(Settings)
 		while true do
-			local v164
-			v163, v164 = v161(v162, v163)
-			if v163 == nil then
+			local UnknownValue4
+			SettingPair, UnknownValue4 = SettingKey(SettingValue, SettingPair)
+			if SettingPair == nil then
 				break
 			end
-			v164.SoundId = "rbxassetid://17771526755"
+			UnknownValue4.SoundId = "rbxassetid://17771526755"
 		end
-	elseif p160 == "Bruh" then
-		local v165, v166, v167 = pairs(vu158)
+	elseif Param6 == "Bruh" then
+		local SettingKey1, SettingValue1, SettingPair1 = pairs(Settings)
 		while true do
-			local v168
-			v167, v168 = v165(v166, v167)
-			if v167 == nil then
+			local UnknownValue5
+			SettingPair1, UnknownValue5 = SettingKey1(SettingValue1, SettingPair1)
+			if SettingPair1 == nil then
 				break
 			end
-			v168.SoundId = "rbxassetid://7616380887"
+			UnknownValue5.SoundId = "rbxassetid://7616380887"
 		end
-	elseif p160 == "Dragon ball hit" then
-		local v169, v170, v171 = pairs(vu158)
+	elseif Param6 == "Dragon ball hit" then
+		local SettingKey2, SettingValue2, SettingPair2 = pairs(Settings)
 		while true do
-			local v172
-			v171, v172 = v169(v170, v171)
-			if v171 == nil then
+			local UnknownValue6
+			SettingPair2, UnknownValue6 = SettingKey2(SettingValue2, SettingPair2)
+			if SettingPair2 == nil then
 				break
 			end
-			v172.SoundId = "rbxassetid://1058693352"
+			UnknownValue6.SoundId = "rbxassetid://1058693352"
 		end
-	elseif p160 == "Among Us" then
-		local v173, v174, v175 = pairs(vu158)
+	elseif Param6 == "Among Us" then
+		local SettingKey3, SettingValue3, SettingPair3 = pairs(Settings)
 		while true do
-			local v176
-			v175, v176 = v173(v174, v175)
-			if v175 == nil then
+			local UnknownValue7
+			SettingPair3, UnknownValue7 = SettingKey3(SettingValue3, SettingPair3)
+			if SettingPair3 == nil then
 				break
 			end
-			v176.SoundId = "rbxassetid://7227567562"
+			UnknownValue7.SoundId = "rbxassetid://7227567562"
 		end
-	elseif p160 == "TFS" then
-		local v177, v178, v179 = pairs(vu158)
+	elseif Param6 == "TFS" then
+		local SettingKey4, SettingValue4, SettingPair4 = pairs(Settings)
 		while true do
-			local v180
-			v179, v180 = v177(v178, v179)
-			if v179 == nil then
+			local UnknownValue8
+			SettingPair4, UnknownValue8 = SettingKey4(SettingValue4, SettingPair4)
+			if SettingPair4 == nil then
 				break
 			end
-			v180.SoundId = "rbxassetid://6909256325"
+			UnknownValue8.SoundId = "rbxassetid://6909256325"
 		end
-	elseif p160 == "UwU" then
-		local v181, v182, v183 = pairs(vu158)
+	elseif Param6 == "UwU" then
+		local SettingKey5, SettingValue5, SettingPair5 = pairs(Settings)
 		while true do
-			local v184
-			v183, v184 = v181(v182, v183)
-			if v183 == nil then
+			local UnknownValue9
+			SettingPair5, UnknownValue9 = SettingKey5(SettingValue5, SettingPair5)
+			if SettingPair5 == nil then
 				break
 			end
-			v184.SoundId = "rbxassetid://8323804973"
+			UnknownValue9.SoundId = "rbxassetid://8323804973"
 		end
 	end
 end)
-v45.GunMods:AddInput("", {
+MainTab.GunMods:AddInput("", {
 	Title = "Custom Sound",
 	Description = "Get it from the marketplace\n(paste the numbers in url into here)",
 	Default = "",
 	Placeholder = "",
 	Numeric = true,
 	Finished = false,
-	Callback = function(p185)
-		local v186, v187, v188 = pairs(vu158)
+	Callback = function(Param7)
+		local SettingKey6, SettingValue6, SettingPair6 = pairs(Settings)
 		while true do
-			local v189
-			v188, v189 = v186(v187, v188)
-			if v188 == nil then
+			local UnknownValue10
+			SettingPair6, UnknownValue10 = SettingKey6(SettingValue6, SettingPair6)
+			if SettingPair6 == nil then
 				break
 			end
-			v189.SoundId = "rbxassetid://" .. p185
+			UnknownValue10.SoundId = "rbxassetid://" .. Param7
 		end
 	end
 })
-local vu190 = false
-if vu190 then
+local BooleanValue = false
+if BooleanValue then
 	getfenv().getfenv = function()
 		return setmetatable({}, {
 			__index = function()
@@ -949,11 +981,11 @@ if vu190 then
 	end
 end
 game:GetService("HttpService")
-local vu191 = game:GetService("Players")
-local vu192 = game:GetService("UserInputService")
-local v193 = game:GetService("RunService")
-local vu194 = game:GetService("TweenService")
-local vu195 = {
+local PlayersService = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local GameSettings = {
 	Aimbot = false,
 	OnePressAimingMode = false,
 	AimMode = "Camera",
@@ -978,386 +1010,386 @@ local vu195 = {
 	WallCheck = false,
 	WaterCheck = false
 }
-local vu196 = vu191.LocalPlayer
-local vu197 = vu196:GetMouse()
-local vu198 = nil
-local vu199 = vu192.MouseDeltaSensitivity
-local vu200 = false
-local vu201 = false
-local vu202 = nil
-local vu203 = nil
-local vu204 = nil
-local v205 = vu192
-vu204 = vu192.GetPropertyChangedSignal(v205, "MouseDeltaSensitivity"):Connect(function()
-	if vu198 then
-		if not vu200 or not vu190 and (getfenv().mousemoverel and vu195.AimMode == "Mouse" or getfenv().hookmetamethod and (getfenv().newcclosure and (getfenv().checkcaller and (getfenv().getnamecallmethod and vu195.AimMode == "Silent")))) then
-			vu199 = vu192.MouseDeltaSensitivity
+local LocalPlayer = PlayersService.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local NilValue = nil
+local MouseSensitivity = UserInputService.MouseDeltaSensitivity
+local FalseValue = false
+local FalseValue1 = false
+local NilValue = nil
+local NilValue1 = nil
+local NilValue2 = nil
+local CombatSection = UserInputService
+NilValue2 = UserInputService.GetPropertyChangedSignal(CombatSection, "MouseDeltaSensitivity"):Connect(function()
+	if NilValue then
+		if not FalseValue or not BooleanValue and (getfenv().mousemoverel and GameSettings.AimMode == "Mouse" or getfenv().hookmetamethod and (getfenv().newcclosure and (getfenv().checkcaller and (getfenv().getnamecallmethod and GameSettings.AimMode == "Silent")))) then
+			MouseSensitivity = UserInputService.MouseDeltaSensitivity
 		end
 	else
-		vu204:Disconnect()
+		NilValue2:Disconnect()
 	end
 end)
-local v206 = v45.Combat:AddSection("Aimbot")
-v206:AddToggle("AimbotToggle", {
+local AimbotConfig = MainTab.Combat:AddSection("Aimbot")
+AimbotConfig:AddToggle("AimbotToggle", {
 	Title = "Aimbot Toggle",
 	Description = "Turns aimbot on/off",
-	Default = vu195.Aimbot
-}):OnChanged(function(p207)
-	vu195.Aimbot = p207
+	Default = GameSettings.Aimbot
+}):OnChanged(function(Parameter1)
+	GameSettings.Aimbot = Parameter1
 end)
-local v209 = v206:AddKeybind("AimKeybind", {
+local AimKeybind = AimbotConfig:AddKeybind("AimKeybind", {
 	Title = "Aimbot Key",
 	Description = "Changes the key for aimbot",
-	Default = vu195.AimKey,
-	ChangedCallback = function(p208)
-		vu195.AimKey = p208
+	Default = GameSettings.AimKey,
+	ChangedCallback = function(Parameter2)
+		GameSettings.AimKey = Parameter2
 	end
 })
-if v209.Value ~= "RMB" then
-	vu195.AimKey = Enum.KeyCode[v209.Value]
+if AimKeybind.Value ~= "RMB" then
+	GameSettings.AimKey = Enum.KeyCode[AimKeybind.Value]
 else
-	vu195.AimKey = Enum.UserInputType.MouseButton2
+	GameSettings.AimKey = Enum.UserInputType.MouseButton2
 end
-local vu211 = v206:AddDropdown("AimPartDropdown", {
+local AimPartDropdown = AimbotConfig:AddDropdown("AimPartDropdown", {
 	Title = "Aimbot Part",
 	Description = "Changes the aimbot part",
-	Values = vu195.AimPartDropdownValues,
-	Default = vu195.AimPart,
-	Callback = function(p210)
-		vu195.AimPart = p210
+	Values = GameSettings.AimPartDropdownValues,
+	Default = GameSettings.AimPart,
+	Callback = function(Parameter3)
+		GameSettings.AimPart = Parameter3
 	end
 })
 task.spawn(function()
-	while task.wait(1) and vu198 do
-		if vu195.RandomAimPart and # vu195.AimPartDropdownValues > 0 then
-			vu211:SetValue(vu195.AimPartDropdownValues[Random.new():NextInteger(1, # vu195.AimPartDropdownValues)])
+	while task.wait(1) and NilValue do
+		if GameSettings.RandomAimPart and # GameSettings.AimPartDropdownValues > 0 then
+			AimPartDropdown:SetValue(GameSettings.AimPartDropdownValues[Random.new():NextInteger(1, # GameSettings.AimPartDropdownValues)])
 		end
 	end
 end)
-local function vu214(p212, p213)
-	vu200 = p212 and vu200 or false
-	vu202 = p213 and vu202 or nil
-	if vu203 then
-		vu203:Cancel()
-		vu203 = nil
+local function LocalFunction1(Parameter4, Parameter5)
+	FalseValue = Parameter4 and FalseValue or false
+	NilValue = Parameter5 and NilValue or nil
+	if NilValue1 then
+		NilValue1:Cancel()
+		NilValue1 = nil
 	end
-	vu192.MouseDeltaSensitivity = vu199
+	UserInputService.MouseDeltaSensitivity = MouseSensitivity
 end
-local vu215 = nil
-vu215 = vu192.InputBegan:Connect(function(p216)
-	if vu198 then
-		if not vu192:GetFocusedTextBox() then
-			if vu195.Aimbot and (p216.KeyCode == vu195.AimKey or p216.UserInputType == vu195.AimKey) then
-				if vu200 then
-					vu214()
+local NilValue3 = nil
+NilValue3 = UserInputService.InputBegan:Connect(function(Parameter6)
+	if NilValue then
+		if not UserInputService:GetFocusedTextBox() then
+			if GameSettings.Aimbot and (Parameter6.KeyCode == GameSettings.AimKey or Parameter6.UserInputType == GameSettings.AimKey) then
+				if FalseValue then
+					LocalFunction1()
 				else
-					vu200 = true
+					FalseValue = true
 				end
-			elseif vu195.TriggerBot and (p216.KeyCode == vu195.TriggerKey or p216.UserInputType == vu195.TriggerKey) then
-				if vu201 then
-					vu201 = false
+			elseif GameSettings.TriggerBot and (Parameter6.KeyCode == GameSettings.TriggerKey or Parameter6.UserInputType == GameSettings.TriggerKey) then
+				if FalseValue1 then
+					FalseValue1 = false
 				else
-					vu201 = true
+					FalseValue1 = true
 				end
 			end
 		end
 	else
-		vu215:Disconnect()
+		NilValue3:Disconnect()
 	end
 end)
-local vu217 = nil
-vu217 = vu192.InputEnded:Connect(function(p218)
-	if vu198 then
-		if not vu192:GetFocusedTextBox() then
-			if vu200 and (not vu195.OnePressAimingMode and (p218.KeyCode == vu195.AimKey or p218.UserInputType == vu195.AimKey)) then
-				vu214()
-			elseif vu201 and (not vu195.OnePressTriggeringMode and (p218.KeyCode == vu195.TriggerKey or p218.UserInputType == vu195.TriggerKey)) then
-				vu201 = false
+local NilValue4 = nil
+NilValue4 = UserInputService.InputEnded:Connect(function(Parameter7)
+	if NilValue then
+		if not UserInputService:GetFocusedTextBox() then
+			if FalseValue and (not GameSettings.OnePressAimingMode and (Parameter7.KeyCode == GameSettings.AimKey or Parameter7.UserInputType == GameSettings.AimKey)) then
+				LocalFunction1()
+			elseif FalseValue1 and (not GameSettings.OnePressTriggeringMode and (Parameter7.KeyCode == GameSettings.TriggerKey or Parameter7.UserInputType == GameSettings.TriggerKey)) then
+				FalseValue1 = false
 			end
 		end
 	else
-		vu217:Disconnect()
+		NilValue4:Disconnect()
 	end
 end)
-local function vu222(p219, p220, p221)
-	return typeof(p219) == "Vector3" and typeof(p220) == "Vector3" and (typeof(p221) == "number" and (p220 - p219).Unit * p221) or Vector3.zero
+local function LocalFunction2(Parameter8, Parameter9, Parameter10)
+	return typeof(Parameter8) == "Vector3" and typeof(Parameter9) == "Vector3" and (typeof(Parameter10) == "number" and (Parameter9 - Parameter8).Unit * Parameter10) or Vector3.zero
 end
-local function vu233(p223)
-	if not p223 or (not p223:FindFirstChildWhichIsA("Humanoid") or (p223:FindFirstChildWhichIsA("Humanoid").Health <= 0 or (p223:FindFirstChildWhichIsA("ForceField") or not (vu195.AimPart and p223:FindFirstChild(vu195.AimPart))))) or (not (p223:FindFirstChild(vu195.AimPart):IsA("BasePart") and vu196.Character) or (not vu196.Character:FindFirstChildWhichIsA("Humanoid") or (vu196.Character:FindFirstChildWhichIsA("Humanoid").Health <= 0 or not (vu196.Character:FindFirstChild(vu195.AimPart) and vu196.Character:FindFirstChild(vu195.AimPart):IsA("BasePart"))))) then
+local function LocalFunction3(PlayerParameter)
+	if not PlayerParameter or (not PlayerParameter:FindFirstChildWhichIsA("Humanoid") or (PlayerParameter:FindFirstChildWhichIsA("Humanoid").Health <= 0 or (PlayerParameter:FindFirstChildWhichIsA("ForceField") or not (GameSettings.AimPart and PlayerParameter:FindFirstChild(GameSettings.AimPart))))) or (not (PlayerParameter:FindFirstChild(GameSettings.AimPart):IsA("BasePart") and LocalPlayer.Character) or (not LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid") or (LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Health <= 0 or not (LocalPlayer.Character:FindFirstChild(GameSettings.AimPart) and LocalPlayer.Character:FindFirstChild(GameSettings.AimPart):IsA("BasePart"))))) then
 		return false
 	end
-	local v224 = vu191:GetPlayerFromCharacter(p223)
-	if not v224 or v224 == vu196 then
+	local PlayerObject = PlayersService:GetPlayerFromCharacter(PlayerParameter)
+	if not PlayerObject or PlayerObject == LocalPlayer then
 		return false
 	end
-	local v225 = p223:FindFirstChild(vu195.AimPart)
-	local v226 = vu196.Character:FindFirstChild(vu195.AimPart)
-	local v227 = vu196
-	if v224:GetAttribute("Team") == v227:GetAttribute("Team") then
+	local AimPart = PlayerParameter:FindFirstChild(GameSettings.AimPart)
+	local CharacterPart = LocalPlayer.Character:FindFirstChild(GameSettings.AimPart)
+	local PlayerCharacter = LocalPlayer
+	if PlayerObject:GetAttribute("Team") == PlayerCharacter:GetAttribute("Team") then
 		return false
 	end
-	if vu195.WallCheck then
-		local v228 = vu222(v226.Position, v225.Position, (v225.Position - v226.Position).Magnitude)
-		local v229 = RaycastParams.new()
-		v229.FilterType = Enum.RaycastFilterType.Exclude
-		v229.FilterDescendantsInstances = {
-			vu196.Character
+	if GameSettings.WallCheck then
+		local VectorCalculation = LocalFunction2(CharacterPart.Position, AimPart.Position, (AimPart.Position - CharacterPart.Position).Magnitude)
+		local RaycastParams = RaycastParams.new()
+		RaycastParams.FilterType = Enum.RaycastFilterType.Exclude
+		RaycastParams.FilterDescendantsInstances = {
+			LocalPlayer.Character
 		}
-		v229.IgnoreWater = not vu195.WaterCheck
-		local v230 = workspace:Raycast(v226.Position, v228, v229)
-		if not (v230 and v230.Instance and v230.Instance:FindFirstAncestor(v224.Name)) then
+		RaycastParams.IgnoreWater = not GameSettings.WaterCheck
+		local RaycastResult = workspace:Raycast(CharacterPart.Position, VectorCalculation, RaycastParams)
+		if not (RaycastResult and RaycastResult.Instance and RaycastResult.Instance:FindFirstAncestor(PlayerObject.Name)) then
 			return false
 		end
 	end
-	local v231 = vu195.UseOffset and (vu195.AutoOffset and Vector3.new(0, v225.Position.Y * vu195.StaticOffsetIncrement * (v225.Position - v226.Position).Magnitude / 1000 <= vu195.MaxAutoOffset and v225.Position.Y * vu195.StaticOffsetIncrement * (v225.Position - v226.Position).Magnitude / 1000 or vu195.MaxAutoOffset, 0) + p223:FindFirstChildWhichIsA("Humanoid").MoveDirection * vu195.DynamicOffsetIncrement / 10 or vu195.OffsetType == "Static" and Vector3.new(0, v225.Position.Y * vu195.StaticOffsetIncrement / 10, 0) or (vu195.OffsetType == "Dynamic" and p223:FindFirstChildWhichIsA("Humanoid").MoveDirection * vu195.DynamicOffsetIncrement / 10 or Vector3.new(0, v225.Position.Y * vu195.StaticOffsetIncrement / 10, 0) + p223:FindFirstChildWhichIsA("Humanoid").MoveDirection * vu195.DynamicOffsetIncrement / 10)) or Vector3.zero
-	local v232 = vu195.UseNoise and Vector3.new(Random.new():NextNumber(0.5, 1), Random.new():NextNumber(0.5, 1), Random.new():NextNumber(0.5, 1)) or Vector3.zero
-	return true, p223, {
-		workspace.CurrentCamera:WorldToViewportPoint(v225.Position + v231 + v232)
-	}, v225.Position + v231 + v232, (v225.Position + v231 + v232 - v226.Position).Magnitude, CFrame.new(v225.Position + v231 + v232) * CFrame.fromEulerAnglesYXZ(math.rad(v225.Orientation.X), math.rad(v225.Orientation.Y), math.rad(v225.Orientation.Z)), v225
+	local OffsetVector = GameSettings.UseOffset and (GameSettings.AutoOffset and Vector3.new(0, AimPart.Position.Y * GameSettings.StaticOffsetIncrement * (AimPart.Position - CharacterPart.Position).Magnitude / 1000 <= GameSettings.MaxAutoOffset and AimPart.Position.Y * GameSettings.StaticOffsetIncrement * (AimPart.Position - CharacterPart.Position).Magnitude / 1000 or GameSettings.MaxAutoOffset, 0) + PlayerParameter:FindFirstChildWhichIsA("Humanoid").MoveDirection * GameSettings.DynamicOffsetIncrement / 10 or GameSettings.OffsetType == "Static" and Vector3.new(0, AimPart.Position.Y * GameSettings.StaticOffsetIncrement / 10, 0) or (GameSettings.OffsetType == "Dynamic" and PlayerParameter:FindFirstChildWhichIsA("Humanoid").MoveDirection * GameSettings.DynamicOffsetIncrement / 10 or Vector3.new(0, AimPart.Position.Y * GameSettings.StaticOffsetIncrement / 10, 0) + PlayerParameter:FindFirstChildWhichIsA("Humanoid").MoveDirection * GameSettings.DynamicOffsetIncrement / 10)) or Vector3.zero
+	local NoiseVector = GameSettings.UseNoise and Vector3.new(Random.new():NextNumber(0.5, 1), Random.new():NextNumber(0.5, 1), Random.new():NextNumber(0.5, 1)) or Vector3.zero
+	return true, PlayerParameter, {
+		workspace.CurrentCamera:WorldToViewportPoint(AimPart.Position + OffsetVector + NoiseVector)
+	}, AimPart.Position + OffsetVector + NoiseVector, (AimPart.Position + OffsetVector + NoiseVector - CharacterPart.Position).Magnitude, CFrame.new(AimPart.Position + OffsetVector + NoiseVector) * CFrame.fromEulerAnglesYXZ(math.rad(AimPart.Orientation.X), math.rad(AimPart.Orientation.Y), math.rad(AimPart.Orientation.Z)), AimPart
 end
-local vu234 = {}
-local vu235 = {}
-local function vu237(p236)
-	if p236 and vu234[p236] then
-		vu234[p236]:Disconnect()
-		table.remove(vu234, p236)
+local Table1 = {}
+local Table2 = {}
+local function LocalFunction4(Parameter11)
+	if Parameter11 and Table1[Parameter11] then
+		Table1[Parameter11]:Disconnect()
+		table.remove(Table1, Parameter11)
 	end
 end
-local function vu243(p238)
-	if p238 and vu235[p238] then
-		local v239 = next
-		local v240 = vu235[p238]
-		local v241 = nil
+local function LocalFunction5(Parameter12)
+	if Parameter12 and Table2[Parameter12] then
+		local NextValue = next
+		local TableValue = Table2[Parameter12]
+		local NilValue5 = nil
 		while true do
-			local v242
-			v241, v242 = v239(v240, v241)
-			if v241 == nil then
+			local UnusedValue
+			NilValue5, UnusedValue = NextValue(TableValue, NilValue5)
+			if NilValue5 == nil then
 				break
 			end
-			v242:Disconnect()
+			UnusedValue:Disconnect()
 		end
-		table.remove(vu235, p238)
+		table.remove(Table2, Parameter12)
 	end
 end
-local function vu252()
-	local v244 = next
-	local v245 = vu235
-	local v246 = nil
+local function LocalFunction6()
+	local NextValue1 = next
+	local Table2Value = Table2
+	local NilValue6 = nil
 	while true do
-		local v247
-		v246, v247 = v244(v245, v246)
-		if v246 == nil then
+		local UnusedValue1
+		NilValue6, UnusedValue1 = NextValue1(Table2Value, NilValue6)
+		if NilValue6 == nil then
 			break
 		end
-		vu243(v246)
+		LocalFunction5(NilValue6)
 	end
-	local v248 = next
-	local v249 = vu234
-	local v250 = nil
+	local NextValue2 = next
+	local Table1Value = Table1
+	local NilValue7 = nil
 	while true do
-		local v251
-		v250, v251 = v248(v249, v250)
-		if v250 == nil then
+		local UnusedValue2
+		NilValue7, UnusedValue2 = NextValue2(Table1Value, NilValue7)
+		if NilValue7 == nil then
 			break
 		end
-		vu237(v250)
+		LocalFunction4(NilValue7)
 	end
 end
-local function vu253()
-	vu214()
-	vu201 = false
-	vu252()
+local function LocalFunction7()
+	LocalFunction1()
+	FalseValue1 = false
+	LocalFunction6()
 end
-local function vu255(p254)
-	if typeof(p254) == "Instance" then
-		vu191:GetPlayerFromCharacter(p254)
+local function LocalFunction8(Parameter13)
+	if typeof(Parameter13) == "Instance" then
+		PlayersService:GetPlayerFromCharacter(Parameter13)
 	end
 end
-local function vu261(p256)
-	if typeof(p256) == "Instance" then
-		local v257 = next
-		local v258 = vu234
-		local v259 = nil
+local function LocalFunction9(Parameter14)
+	if typeof(Parameter14) == "Instance" then
+		local NextValue3 = next
+		local Table1Value1 = Table1
+		local NilValue8 = nil
 		while true do
-			local v260
-			v259, v260 = v257(v258, v259)
-			if v259 == nil then
+			local UnusedValue3
+			NilValue8, UnusedValue3 = NextValue3(Table1Value1, NilValue8)
+			if NilValue8 == nil then
 				break
 			end
-			if v260.Character == p256 then
-				vu237(v259)
+			if UnusedValue3.Character == Parameter14 then
+				LocalFunction4(NilValue8)
 			end
 		end
 	end
 end
-local function v266()
-	if not vu190 and getfenv().Drawing then
-		local v262 = next
-		local v263, v264 = vu191:GetPlayers()
+local function LocalFunction10()
+	if not BooleanValue and getfenv().Drawing then
+		local NextValue4 = next
+		local PlayerList, PlayerList1 = PlayersService:GetPlayers()
 		while true do
-			local v265
-			v264, v265 = v262(v263, v264)
-			if v264 == nil then
+			local UnusedValue4
+			PlayerList1, UnusedValue4 = NextValue4(PlayerList, PlayerList1)
+			if PlayerList1 == nil then
 				break
 			end
-			if v265 ~= vu196 and v265.Character then
-				vu255(v265.Character)
-				vu235[v265.UserId] = {
-					v265.CharacterAdded:Connect(vu255),
-					v265.CharacterRemoving:Connect(vu261)
+			if UnusedValue4 ~= LocalPlayer and UnusedValue4.Character then
+				LocalFunction8(UnusedValue4.Character)
+				Table2[UnusedValue4.UserId] = {
+					UnusedValue4.CharacterAdded:Connect(LocalFunction8),
+					UnusedValue4.CharacterRemoving:Connect(LocalFunction9)
 				}
 			end
 		end
 	end
 end
-task.spawn(v266)
-local vu267 = nil
-vu267 = vu196.OnTeleport:Connect(function()
-	if vu190 or not (vu198 and getfenv().queue_on_teleport) then
-		vu267:Disconnect()
+task.spawn(LocalFunction10)
+local NilValue9 = nil
+NilValue9 = LocalPlayer.OnTeleport:Connect(function()
+	if BooleanValue or not (NilValue and getfenv().queue_on_teleport) then
+		NilValue9:Disconnect()
 	else
 		getfenv().queue_on_teleport("getfenv().loadstring(game:HttpGet(\"https://raw.githubusercontent.com/ttwizz/Open-Aimbot/master/source.lua\", true))()")
-		vu267:Disconnect()
+		NilValue9:Disconnect()
 	end
 end)
-local vu268 = nil
-vu268 = vu191.PlayerAdded:Connect(function(p269)
-	if vu190 or not (vu198 and getfenv().Drawing) then
-		vu268:Disconnect()
-	elseif p269 ~= vu196 then
-		vu235[p269.UserId] = {
-			p269.CharacterAdded:Connect(vu255),
-			p269.CharacterRemoving:Connect(vu261)
+local NilValue10 = nil
+NilValue10 = PlayersService.PlayerAdded:Connect(function(Parameter15)
+	if BooleanValue or not (NilValue and getfenv().Drawing) then
+		NilValue10:Disconnect()
+	elseif Parameter15 ~= LocalPlayer then
+		Table2[Parameter15.UserId] = {
+			Parameter15.CharacterAdded:Connect(LocalFunction8),
+			Parameter15.CharacterRemoving:Connect(LocalFunction9)
 		}
 	end
 end)
-local vu270 = nil
-vu270 = vu191.PlayerRemoving:Connect(function(p271)
-	if vu198 then
-		if p271 ~= vu196 then
-			vu243(p271.UserId)
-			vu237(p271.UserId)
+local NilValue11 = nil
+NilValue11 = PlayersService.PlayerRemoving:Connect(function(Parameter16)
+	if NilValue then
+		if Parameter16 ~= LocalPlayer then
+			LocalFunction5(Parameter16.UserId)
+			LocalFunction4(Parameter16.UserId)
 		else
-			vu198:Destroy()
-			vu253()
-			vu270:Disconnect()
+			NilValue:Destroy()
+			LocalFunction7()
+			NilValue11:Disconnect()
 		end
 	else
-		vu270:Disconnect()
+		NilValue11:Disconnect()
 	end
 end)
-local vu272 = nil
-vu272 = v193.RenderStepped:Connect(function()
-	if vu198.Unloaded then
-		vu198 = nil
-		vu253()
-		vu272:Disconnect()
-	elseif vu195.Aimbot then
-		if not vu195.TriggerBot then
-			vu201 = false
+local NilValue12 = nil
+NilValue12 = RunService.RenderStepped:Connect(function()
+	if NilValue.Unloaded then
+		NilValue = nil
+		LocalFunction7()
+		NilValue12:Disconnect()
+	elseif GameSettings.Aimbot then
+		if not GameSettings.TriggerBot then
+			FalseValue1 = false
 		end
 	else
-		vu214()
+		LocalFunction1()
 	end
-	if vu200 then
-		local v273 = vu202
-		local v274 = math.huge
-		if not vu233(v273) then
-			if v273 and not vu195.OffAfterKill or not v273 then
-				local v275 = next
-				local v276, v277 = vu191:GetPlayers()
+	if FalseValue then
+		local NilValue13 = NilValue
+		local MaxValue = math.huge
+		if not LocalFunction3(NilValue13) then
+			if NilValue13 and not GameSettings.OffAfterKill or not NilValue13 then
+				local NextValue5 = next
+				local PlayerList2, PlayerList3 = PlayersService:GetPlayers()
 				while true do
-					local v278
-					v277, v278 = v275(v276, v277)
-					if v277 == nil then
+					local PlayerObject1
+					PlayerList3, PlayerObject1 = NextValue5(PlayerList2, PlayerList3)
+					if PlayerList3 == nil then
 						break
 					end
-					local v279, v280, v281 = vu233(v278.Character)
-					if v279 and v281[2] then
-						local v282 = (Vector2.new(vu197.X, vu197.Y) - Vector2.new(v281[1].X, v281[1].Y)).Magnitude
-						if v282 <= v274 then
-							local v283
-							if vu195.FoVCheck then
-								v283 = vu195.FoVRadius or v274
+					local PlayerCharacter1, PlayerCharacter2, PlayerCharacter3 = LocalFunction3(PlayerObject1.Character)
+					if PlayerCharacter1 and PlayerCharacter3[2] then
+						local VectorMagnitude = (Vector2.new(Mouse.X, Mouse.Y) - Vector2.new(PlayerCharacter3[1].X, PlayerCharacter3[1].Y)).Magnitude
+						if VectorMagnitude <= MaxValue then
+							local UnusedValue5
+							if GameSettings.FoVCheck then
+								UnusedValue5 = GameSettings.FoVRadius or MaxValue
 							else
-								v283 = v274
+								UnusedValue5 = MaxValue
 							end
-							if v282 <= v283 then
-								vu202 = v280
-								v274 = v282
+							if VectorMagnitude <= UnusedValue5 then
+								NilValue = PlayerCharacter2
+								MaxValue = VectorMagnitude
 							end
 						end
 					end
 				end
 			else
-				vu214()
+				LocalFunction1()
 			end
 		end
-		local v284, _, v285, v286 = vu233(vu202)
-		if v284 then
-			if vu190 or (not getfenv().mousemoverel or vu195.AimMode ~= "Mouse") then
-				if vu195.AimMode == "Camera" then
-					vu192.MouseDeltaSensitivity = 0
-					if vu195.UseSensitivity then
-						vu203 = vu194:Create(workspace.CurrentCamera, TweenInfo.new(math.clamp(vu195.Sensitivity, 9, 99) / 100, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-							CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v286)
+		local LocalFunction11, UnusedParam, LocalFunction12, LocalFunction13 = LocalFunction3(NilValue)
+		if LocalFunction11 then
+			if BooleanValue or (not getfenv().mousemoverel or GameSettings.AimMode ~= "Mouse") then
+				if GameSettings.AimMode == "Camera" then
+					UserInputService.MouseDeltaSensitivity = 0
+					if GameSettings.UseSensitivity then
+						NilValue1 = TweenService:Create(workspace.CurrentCamera, TweenInfo.new(math.clamp(GameSettings.Sensitivity, 9, 99) / 100, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+							CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, LocalFunction13)
 						})
-						vu203:Play()
+						NilValue1:Play()
 					else
-						workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v286)
+						workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, LocalFunction13)
 					end
 				end
-			elseif v285[2] then
-				vu214(true, true)
-				local v287 = vu192:GetMouseLocation()
-				local v288 = vu195.UseSensitivity and vu195.Sensitivity / 10 or 10
-				getfenv().mousemoverel((v285[1].X - v287.X) / v288, (v285[1].Y - v287.Y) / v288)
+			elseif LocalFunction12[2] then
+				LocalFunction1(true, true)
+				local MouseLocation = UserInputService:GetMouseLocation()
+				local SensitivityValue = GameSettings.UseSensitivity and GameSettings.Sensitivity / 10 or 10
+				getfenv().mousemoverel((LocalFunction12[1].X - MouseLocation.X) / SensitivityValue, (LocalFunction12[1].Y - MouseLocation.Y) / SensitivityValue)
 			else
-				vu214(true)
+				LocalFunction1(true)
 			end
 		else
-			vu214(true)
+			LocalFunction1(true)
 		end
 	end
 end)
-v45.Combat:AddSection("Hitbox Expander")
-local vu289 = 5
-local vu290 = 5
-local vu291 = 1
-local vu292 = nil
-local vu293 = true
-local vu294 = "HumanoidRootPart"
-v45.Combat:AddSlider("", {
+MainTab.Combat:AddSection("Hitbox Expander")
+local DefaultValue1 = 5
+local DefaultValue2 = 5
+local DefaultValue3 = 1
+local NilValue14 = nil
+local TrueValue = true
+local PartName = "HumanoidRootPart"
+MainTab.Combat:AddSlider("", {
 	Title = "HumanoidRootPart Hitbox Size",
 	Description = "This is only if you have hitbox expander part on \nhumanoidrootpart",
 	Default = 5,
 	Min = 1,
 	Max = 20,
 	Rounding = 0.1,
-	Callback = function(p295)
-		vu289 = p295
+	Callback = function(Parameter17)
+		DefaultValue1 = Parameter17
 	end
 })
-v45.Combat:AddSlider("", {
+MainTab.Combat:AddSlider("", {
 	Title = "Head Hitbox Size",
 	Description = "This is only if you have hitbox expander part on \nhead",
 	Default = 6,
 	Min = 1,
 	Max = 6,
 	Rounding = 0.1,
-	Callback = function(p296)
-		vu290 = p296
+	Callback = function(Parameter18)
+		DefaultValue2 = Parameter18
 	end
 })
-v45.Combat:AddToggle("", {
+MainTab.Combat:AddToggle("", {
 	Title = "Hitbox Visualizer",
 	Description = "",
 	Default = true,
-	Callback = function(p297)
-		vu293 = p297
+	Callback = function(Parameter19)
+		TrueValue = Parameter19
 	end
 })
-v45.Combat:AddDropdown("HExpDrop", {
+MainTab.Combat:AddDropdown("HExpDrop", {
 	Title = "Hitbox Expander Part",
 	Description = "Changes the hitbox expander part.",
 	Values = {
@@ -1365,62 +1397,62 @@ v45.Combat:AddDropdown("HExpDrop", {
 		"Head"
 	},
 	Default = "HumanoidRootPart",
-	Callback = function(p298)
-		vu294 = p298
+	Callback = function(Parameter20)
+		PartName = Parameter20
 	end
 })
-v45.Combat:AddToggle("", {
+MainTab.Combat:AddToggle("", {
 	Title = "Hitbox Expander",
 	Description = "Reach but for guns?",
 	Default = false,
-	Callback = function(p299)
-		vu292 = p299
-		local vu300 = game:GetService("Players").LocalPlayer
-		local function v311(p301, p302)
-			local v303, v304, v305 = ipairs(game:GetService("Workspace"):GetDescendants())
+	Callback = function(Parameter1)
+		NilValue14 = Parameter1
+		local LocalPlayer = game:GetService("Players").LocalPlayer
+		local function FunctionResult(Parameter2, Parameter3)
+			local Descendant1, Descendant2, Descendant3 = ipairs(game:GetService("Workspace"):GetDescendants())
 			while true do
-				local v306
-				v305, v306 = v303(v304, v305)
-				if v305 == nil then
+				local Orb
+				Descendant3, Orb = Descendant1(Descendant2, Descendant3)
+				if Descendant3 == nil then
 					break
 				end
-				if v306:FindFirstChild("HumanoidRootPart") and v306.Name ~= vu300.Name then
-					local v307 = game.Players:FindFirstChild(v306.Name)
-					if v307 then
-						local v308 = vu300
-						if v307:GetAttribute("Team") ~= v308:GetAttribute("Team") then
-							if vu294 ~= "HumanoidRootPart" then
-								if vu294 == "Head" then
-									local v309 = v306:FindFirstChild("Head")
-									if v309 then
-										if vu292 then
-											if v309.Size ~= Vector3.new(vu290, vu290, vu290) then
-												v309.Size = Vector3.new(vu290, vu290, vu290)
-												v309.Transparency = p302 and 0.5 or 1
-												v309.CanCollide = false
+				if Orb:FindFirstChild("HumanoidRootPart") and Orb.Name ~= LocalPlayer.Name then
+					local Player = game.Players:FindFirstChild(Orb.Name)
+					if Player then
+						local LocalPlayerAttribute = LocalPlayer
+						if Player:GetAttribute("Team") ~= LocalPlayerAttribute:GetAttribute("Team") then
+							if PartName ~= "HumanoidRootPart" then
+								if PartName == "Head" then
+									local Head = Orb:FindFirstChild("Head")
+									if Head then
+										if NilValue14 then
+											if Head.Size ~= Vector3.new(DefaultValue2, DefaultValue2, DefaultValue2) then
+												Head.Size = Vector3.new(DefaultValue2, DefaultValue2, DefaultValue2)
+												Head.Transparency = Parameter3 and 0.5 or 1
+												Head.CanCollide = false
 											end
 										else
-											v309.Size = Vector3.new(1, 2, 1)
-											v309.CanCollide = false
-											v309.Transparency = 0
+											Head.Size = Vector3.new(1, 2, 1)
+											Head.CanCollide = false
+											Head.Transparency = 0
 										end
 									end
 								end
 							else
-								local v310 = v306.HumanoidRootPart
-								if v310 then
-									if vu292 then
-										if v310.Size ~= Vector3.new(p301, p301, p301) then
-											v310.Size = Vector3.new(p301, p301, p301)
-											v310.BrickColor = BrickColor.new("Really black")
-											v310.Transparency = p302 and 0.5 or 1
-											v310.Material = "Neon"
+								local HumanoidRootPart = Orb.HumanoidRootPart
+								if HumanoidRootPart then
+									if NilValue14 then
+										if HumanoidRootPart.Size ~= Vector3.new(Parameter2, Parameter2, Parameter2) then
+											HumanoidRootPart.Size = Vector3.new(Parameter2, Parameter2, Parameter2)
+											HumanoidRootPart.BrickColor = BrickColor.new("Really black")
+											HumanoidRootPart.Transparency = Parameter3 and 0.5 or 1
+											HumanoidRootPart.Material = "Neon"
 										end
 									else
-										v310.Size = Vector3.new(1, 2, 1)
-										v310.BrickColor = BrickColor.new("Really black")
-										v310.Transparency = p302 and 0.5 or vu291
-										v310.Material = "Neon"
+										HumanoidRootPart.Size = Vector3.new(1, 2, 1)
+										HumanoidRootPart.BrickColor = BrickColor.new("Really black")
+										HumanoidRootPart.Transparency = Parameter3 and 0.5 or DefaultValue3
+										HumanoidRootPart.Material = "Neon"
 									end
 								end
 							end
@@ -1429,85 +1461,85 @@ v45.Combat:AddToggle("", {
 				end
 			end
 		end
-		while vu292 do
-			while vu292 do
-				v311(vu289, vu293)
+		while NilValue14 do
+			while NilValue14 do
+				FunctionResult(DefaultValue1, TrueValue)
 				task.wait(0.1)
 			end
-			v311(2, false)
-			v311(vu289, vu293)
+			FunctionResult(2, false)
+			FunctionResult(DefaultValue1, TrueValue)
 			task.wait(0.1)
 		end
 	end
 })
-v45.Visuals:AddSection("ESP")
-local vu312 = Color3.fromRGB(255, 255, 255)
-local vu313 = Color3.fromRGB(255, 255, 255)
-local vu314 = 0.5
-local vu315 = 0.5
-local _ = game:GetService("Players").LocalPlayer
-local vu316 = v45.Visuals:AddColorpicker("Colorpicker", {
+MainTab.Visuals:AddSection("ESP")
+local Color1 = Color3.fromRGB(255, 255, 255)
+local Color2 = Color3.fromRGB(255, 255, 255)
+local Value1 = 0.5
+local Value2 = 0.5
+local LocalPlayerAttribute1 = game:GetService("Players").LocalPlayer
+local ColorPicker1 = MainTab.Visuals:AddColorpicker("Colorpicker", {
 	Title = "Fill Color",
 	Description = "",
 	Default = Color3.fromRGB(255, 255, 255)
 })
-local vu317 = v45.Visuals:AddColorpicker("Colorpicker", {
+local ColorPicker2 = MainTab.Visuals:AddColorpicker("Colorpicker", {
 	Title = "Outline Color",
 	Description = "",
 	Default = Color3.fromRGB(255, 255, 255)
 })
-local v318 = vu316
-vu316.OnChanged(v318, function()
-	vu312 = vu316.Value
+local ColorPicker1Value = ColorPicker1
+ColorPicker1.OnChanged(ColorPicker1Value, function()
+	Color1 = ColorPicker1.Value
 end)
-local v319 = vu317
-vu317.OnChanged(v319, function()
-	vu313 = vu317.Value
+local ColorPicker2Value = ColorPicker2
+ColorPicker2.OnChanged(ColorPicker2Value, function()
+	Color2 = ColorPicker2.Value
 end)
-v45.Visuals:AddSlider("", {
+MainTab.Visuals:AddSlider("", {
 	Title = "Outline Transparency",
 	Description = "",
 	Default = 0.5,
 	Min = 0,
 	Max = 0.9,
 	Rounding = 1,
-	Callback = function(p320)
-		vu314 = p320
+	Callback = function(Parameter4)
+		Value1 = Parameter4
 	end
 })
-v45.Visuals:AddSlider("", {
+MainTab.Visuals:AddSlider("", {
 	Title = "Fill Transparency",
 	Description = "",
 	Default = 0.5,
 	Min = 0,
 	Max = 0.9,
 	Rounding = 1,
-	Callback = function(p321)
-		vu315 = p321
+	Callback = function(Parameter5)
+		Value2 = Parameter5
 	end
 })
-v45.Visuals:AddToggle("", {
+MainTab.Visuals:AddToggle("", {
 	Title = "ESP",
 	Description = "Highlights every player, allowing you to see them from afar.",
 	Default = false,
-	Callback = function(p322)
-		getgenv().enabled = p322
+	Callback = function(Parameter6)
+		getgenv().enabled = Parameter6
 		getgenv().filluseteamcolor = true
 		getgenv().outlineuseteamcolor = true
-		getgenv().fillcolor = vu312
-		getgenv().outlinecolor = vu313
-		getgenv().filltrans = vu315
-		getgenv().outlinetrans = vu314
-		local v323 = game.CoreGui:FindFirstChild("ESPHolder") or Instance.new("Folder")
+		getgenv().fillcolor = Color1
+		getgenv().outlinecolor = Color2
+		getgenv().filltrans = Value2
+		getgenv().outlinetrans = Value1
+		local EspHolder = game.CoreGui:FindFirstChild("ESPHolder") or Instance.new("Folder")
 		if enabled == false then
-			v323:Destroy()
+			EspHolder:Destroy()
 		end
-		if v323.Name == "Folder" then
-			v323.Name = "ESPHolder"
-			v323.Parent = game.CoreGui
+		if EspHolder.Name == "Folder" then
+			EspHolder.Name = "ESPHolder"
+			EspHolder.Parent = game.CoreGui
 		end
-		if uselocalplayer == false and v323:FindFirstChild(game.Players.LocalPlayer.Name) then
-			v323:FindFirstChild(game.Players.LocalPlayer.Name):Destroy()
+		if uselocalplayer == false and EspHolder:FindFirstChild(game.Players.LocalPlayer.Name) then
+			EspHolder:FindFirstChild(game.Players.LocalPlayer.Name):Destroy()
 		end
 		if getgenv().enabled == true then
 			getgenv().enabled = false
@@ -1515,35 +1547,35 @@ v45.Visuals:AddToggle("", {
 		end
 		while getgenv().enabled do
 			task.wait(0.5)
-			local v324, v325, v326 = ipairs(game:GetService("Workspace"):GetDescendants())
+			local Descendant4, Descendant5, Descendant6 = ipairs(game:GetService("Workspace"):GetDescendants())
 			while true do
-				local v327
-				v326, v327 = v324(v325, v326)
-				if v326 == nil then
+				local Orb1
+				Descendant6, Orb1 = Descendant4(Descendant5, Descendant6)
+				if Descendant6 == nil then
 					break
 				end
-				if v327:FindFirstChild("HumanoidRootPart") and v327.Name ~= vu38.Name then
-					local v328 = game.Players:FindFirstChild(v327.Name)
-					if v328 then
-						local v329 = v323:FindFirstChild(v328.Name) or Instance.new("Highlight")
-						v329.Name = v328.Name
-						if uselocalplayer ~= false or v329.Name ~= game.Players.LocalPlayer.Name then
-							v329.Parent = v323
-							local v330 = v328:GetAttribute("Team") == game.Players.LocalPlayer:GetAttribute("Team")
+				if Orb1:FindFirstChild("HumanoidRootPart") and Orb1.Name ~= LocalPlayer.Name then
+					local Player1 = game.Players:FindFirstChild(Orb1.Name)
+					if Player1 then
+						local Highlight = EspHolder:FindFirstChild(Player1.Name) or Instance.new("Highlight")
+						Highlight.Name = Player1.Name
+						if uselocalplayer ~= false or Highlight.Name ~= game.Players.LocalPlayer.Name then
+							Highlight.Parent = EspHolder
+							local IsSameTeam = Player1:GetAttribute("Team") == game.Players.LocalPlayer:GetAttribute("Team")
 							if filluseteamcolor then
-								v329.FillColor = v330 and fillcolor or BrickColor.Red().Color
+								Highlight.FillColor = IsSameTeam and fillcolor or BrickColor.Red().Color
 							else
-								v329.FillColor = fillcolor
+								Highlight.FillColor = fillcolor
 							end
 							if outlineuseteamcolor then
-								v329.OutlineColor = v330 and outlinecolor or BrickColor.Red().Color
+								Highlight.OutlineColor = IsSameTeam and outlinecolor or BrickColor.Red().Color
 							else
-								v329.OutlineColor = outlinecolor
+								Highlight.OutlineColor = outlinecolor
 							end
-							v329.FillTransparency = filltrans
-							v329.OutlineTransparency = outlinetrans
-							v329.Adornee = v327
-							v329.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+							Highlight.FillTransparency = filltrans
+							Highlight.OutlineTransparency = outlinetrans
+							Highlight.Adornee = Orb1
+							Highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
 						end
 					end
 				end
@@ -1551,71 +1583,71 @@ v45.Visuals:AddToggle("", {
 		end
 	end
 })
-v45.Visuals:AddSection("World")
-local vu331 = game:GetService("Lighting")
-local vu332 = vu331.Ambient
-v45.Visuals:AddToggle("", {
+MainTab.Visuals:AddSection("World")
+local Lighting = game:GetService("Lighting")
+local Ambient = Lighting.Ambient
+MainTab.Visuals:AddToggle("", {
 	Title = "Full Bright",
 	Description = "light up light up the world",
 	Default = false,
-	Callback = function(p333)
-		if p333 == true then
-			vu331.Ambient = Color3.new(1, 1, 1)
-			vu331.ColorShift_Bottom = Color3.new(1, 1, 1)
-			vu331.ColorShift_Top = Color3.new(1, 1, 1)
+	Callback = function(Parameter7)
+		if Parameter7 == true then
+			Lighting.Ambient = Color3.new(1, 1, 1)
+			Lighting.ColorShift_Bottom = Color3.new(1, 1, 1)
+			Lighting.ColorShift_Top = Color3.new(1, 1, 1)
 		else
-			vu331.Ambient = vu332
-			vu331.ColorShift_Bottom = Color3.new()
-			vu331.ColorShift_Top = Color3.new()
+			Lighting.Ambient = Ambient
+			Lighting.ColorShift_Bottom = Color3.new()
+			Lighting.ColorShift_Top = Color3.new()
 		end
 	end
 })
-v45.Visuals:AddToggle("", {
+MainTab.Visuals:AddToggle("", {
 	Title = "Night / Day",
 	Description = "Changes the time to night.",
 	Default = false,
-	Callback = function(p334)
-		if p334 == true then
-			vu331.ClockTime = 0
+	Callback = function(Parameter8)
+		if Parameter8 == true then
+			Lighting.ClockTime = 0
 		else
-			vu331.ClockTime = 14
+			Lighting.ClockTime = 14
 		end
 	end
 })
-v45.Misc:AddSection("Main")
-v45.Misc:AddButton({
+MainTab.Misc:AddSection("Main")
+MainTab.Misc:AddButton({
 	Title = "Force Reset",
 	Description = "If you wanna live, don\'t use this lol",
 	Callback = function()
-		vu38.Character.Humanoid.Health = 0
+		LocalPlayer.Character.Humanoid.Health = 0
 	end
 })
-v45.Misc:AddButton({
+MainTab.Misc:AddButton({
 	Title = "Rejoin Server",
 	Description = "Rejoins the game you\'re currently in.",
 	Callback = function()
-		local v335 = game:GetService("TeleportService")
-		local v336 = game:GetService("Players").LocalPlayer
-		v335:Teleport(game.PlaceId, v336)
+		local TeleportService = game:GetService("TeleportService")
+		local LocalPlayer1 = game:GetService("Players").LocalPlayer
+		TeleportService:Teleport(game.PlaceId, LocalPlayer1)
 	end
 })
-local v337 = vu38
-local v338 = vu38.GetAttribute(v337, "Primary")
-v45.Misc:AddSlider("Slider", {
+local Attribute = LocalPlayer
+local AttributeValue = LocalPlayer.GetAttribute(Attribute, "Primary")
+MainTab.Misc:AddSlider("Slider", {
 	Title = "Gun AimIn FOV",
 	Description = "Change your gun aimin/zoomin fov, could be useful for aiming\nReset to see affects.",
-	Default = game:GetService("ReplicatedStorage").Weapons[v338].FOV.Value or 50,
+	Default = game:GetService("ReplicatedStorage").Weapons[AttributeValue].FOV.Value or 50,
 	Min = 1,
 	Max = 1000,
 	Rounding = 0.1,
-	Callback = function(p339)
-		local v340 = vu38:GetAttribute("Primary")
-		if game:GetService("ReplicatedStorage").Weapons:FindFirstChild(v340) then
-			local _ = game:GetService("ReplicatedStorage").Weapons[v340]
-			if game:GetService("ReplicatedStorage").Weapons[v340]:FindFirstChild("FOV") then
-				game:GetService("ReplicatedStorage").Weapons[v340]:FindFirstChild("FOV").Value = p339
+	Callback = function(Parameter9)
+		local PrimaryAttribute = LocalPlayer:GetAttribute("Primary")
+		if game:GetService("ReplicatedStorage").Weapons:FindFirstChild(PrimaryAttribute) then
+			local Weapon = game:GetService("ReplicatedStorage").Weapons[PrimaryAttribute]
+			if game:GetService("ReplicatedStorage").Weapons[PrimaryAttribute]:FindFirstChild("FOV") then
+				game:GetService("ReplicatedStorage").Weapons[PrimaryAttribute]:FindFirstChild("FOV").Value = Parameter9
 			else
-				vu198:Notify({
+				NilValue:Notify({
 					Title = "Error.",
 					Content = "Couldn\'t find your gun, please try again.",
 					SubContent = "",
@@ -1625,31 +1657,31 @@ v45.Misc:AddSlider("Slider", {
 		end
 	end
 })
-v45.Misc:AddSection("Misc Sound Changers")
-local vu341 = {}
-local v342 = "NukeSound"
-local v343 = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("NukeIncoming")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
-if v343 then
-	v343 = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("NukeIncoming")
+MainTab.Misc:AddSection("Misc Sound Changers")
+local Table1 = {}
+local SoundName = "NukeSound"
+local HasHud = not (game:GetService("ReplicatedFirst"):FindFirstChild("HUD") and game:GetService("ReplicatedFirst").HUD.Code:FindFirstChild("NukeIncoming")) and (game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("HUD"))
+if HasHud then
+	HasHud = game:GetService("Players").LocalPlayer.PlayerGui.HUD.Code:FindFirstChild("NukeIncoming")
 end
-vu341[v342] = v343
-v45.Misc:AddInput("", {
+Table1[SoundName] = HasHud
+MainTab.Misc:AddInput("", {
 	Title = "Nuke Sound",
 	Description = "Get it from the marketplace\n(paste the numbers in url into here)",
 	Default = "",
 	Placeholder = "",
 	Numeric = true,
 	Finished = false,
-	Callback = function(p344)
-		local v345, v346, v347 = pairs(vu341)
+	Callback = function(Parameter10)
+		local Key, Value, Pair = pairs(Table1)
 		while true do
-			local v348
-			v347, v348 = v345(v346, v347)
-			if v347 == nil then
+			local Variable
+			Pair, Variable = Key(Value, Pair)
+			if Pair == nil then
 				break
 			end
-			v348.SoundId = "rbxassetid://" .. p344
+			Variable.SoundId = "rbxassetid://" .. Parameter10
 		end
 	end
 })
-vu26:SelectTab(1)
+MainWindow:SelectTab(1)
