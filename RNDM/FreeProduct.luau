@@ -1,6 +1,6 @@
-local vu1 = game:GetService("MarketplaceService")
-local vu2 = game:GetService("Players").LocalPlayer
-getgenv().Lib = loadstring([=[local TweenService = game:GetService("TweenService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local LocalPlayer = game:GetService("Players").LocalPlayer
+getgenv().Library = loadstring([=[local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
@@ -3274,1611 +3274,1711 @@ end
 end
 
 return Library]=])()
-local v3 = getgenv().Lib
-local vu4 = "Unknown Game"
+local Library = getgenv().Library
+local GameName = "Unknown Game"
 pcall(function()
-    local v5 = vu1:GetProductInfo(game.PlaceId)
-    if v5 and v5.Name then
-        vu4 = v5.Name
-    end
+	local ProductInfo = MarketplaceService:GetProductInfo(game.PlaceId)
+	if ProductInfo and ProductInfo.Name then
+		GameName = ProductInfo.Name
+	end
 end)
-local v6 = v3:CreateTab("Main")
-local v7 = v6:CreateSection("Products")
-local v8 = v6:CreateSection("Product Statistics")
-v3:CreateWindow(vu4 .. " - This script were Made by rndm")
-local vu9 = {}
-local vu10 = {}
-local vu11 = nil
-local vu12 = false
-local vu13 = 0
-local vu14 = v8:CreateLabel("expensiveLabel", "Most Expensive:\nLoading...")
-local vu15 = v8:CreateLabel("cheapLabel", "Cheapest Product:\nLoading...")
-local vu16 = v8:CreateLabel("purchaseCount", "Products Purchased: 0")
-local vu17 = v8:CreateLabel("totalProducts", "Total Products: 0")
-local function vu24()
-    if # vu9 <= 0 then
-        vu14.ChangeText("Most Expensive:\nNo products found")
-        vu15.ChangeText("Cheapest Product:\nNo products found")
-    else
-        local v18 = vu9[1]
-        local v19 = vu9[1]
-        local v20, v21, v22 = ipairs(vu9)
-        while true do
-            local v23
-            v22, v23 = v20(v21, v22)
-            if v22 == nil then
-                break
-            end
-            if v23.price > v18.price then
-                v18 = v23
-            end
-            if v23.price < v19.price then
-                v19 = v23
-            end
-        end
-        vu14.ChangeText("Most Expensive:\n" .. v18.name)
-        vu15.ChangeText("Cheapest Product:\n" .. v19.name)
-    end
-    vu16.ChangeText("Products Purchased: " .. vu13)
-    vu17.ChangeText("Total Products: " .. # vu9)
+local MainTab = Library:CreateTab("Main")
+local ProductsSection = MainTab:CreateSection("Products")
+local ProductStatisticsSection = MainTab:CreateSection("Product Statistics")
+Library:CreateWindow(GameName .. " - This script were Made by rndm")
+local ProductsList = {}
+local ProductNames = {}
+local SelectedProductId = nil
+local AutoBuyEnabled = false
+local ProductsPurchasedCount = 0
+local MostExpensiveLabel = ProductStatisticsSection:CreateLabel("expensiveLabel", "Most Expensive:\nLoading...")
+local CheapestProductLabel = ProductStatisticsSection:CreateLabel("cheapLabel", "Cheapest Product:\nLoading...")
+local PurchaseCountLabel = ProductStatisticsSection:CreateLabel("purchaseCount", "Products Purchased: 0")
+local TotalProductsLabel = ProductStatisticsSection:CreateLabel("totalProducts", "Total Products: 0")
+local function UpdateProductStats()
+	if #ProductsList <= 0 then
+		MostExpensiveLabel.ChangeText("Most Expensive:\nNo products found")
+		CheapestProductLabel.ChangeText("Cheapest Product:\nNo products found")
+	else
+		local MostExpensiveProduct = ProductsList[1]
+		local CheapestProduct = ProductsList[1]
+		local ProductIterator, ProductList, ProductIndex = ipairs(ProductsList)
+		while true do
+			local CurrentProduct
+			ProductIndex, CurrentProduct = ProductIterator(ProductList, ProductIndex)
+			if ProductIndex == nil then
+				break
+			end
+			if CurrentProduct.price > MostExpensiveProduct.price then
+				MostExpensiveProduct = CurrentProduct
+			end
+			if CurrentProduct.price < CheapestProduct.price then
+				CheapestProduct = CurrentProduct
+			end
+		end
+		MostExpensiveLabel.ChangeText("Most Expensive:\n" .. MostExpensiveProduct.name)
+		CheapestProductLabel.ChangeText("Cheapest Product:\n" .. CheapestProduct.name)
+	end
+	PurchaseCountLabel.ChangeText("Products Purchased: " .. ProductsPurchasedCount)
+	TotalProductsLabel.ChangeText("Total Products: " .. #ProductsList)
 end
-local vu30 = v7:CreateDropdown("Select Product", {
-    "Loading...."
-}, 1, function(p25)
-    local v26, v27, v28 = ipairs(vu9)
-    while true do
-        local v29
-        v28, v29 = v26(v27, v28)
-        if v28 == nil then
-            break
-        end
-        if v29.name == p25 then
-            vu11 = v29.id
-            break
-        end
-    end
-end)
-local function vu41()
-    vu9 = {}
-    vu10 = {}
-    local v31 = vu1:GetDeveloperProductsAsync()
-    local v32, v33, v34 = pairs(v31:GetCurrentPage())
-    while true do
-        local v35
-        v34, v35 = v32(v33, v34)
-        if v34 == nil then
-            break
-        end
-        table.insert(vu9, {
-            id = v35.ProductId,
-            name = v35.Name,
-            price = v35.PriceInRobux or 0
-        })
-        table.insert(vu10, v35.Name)
-    end
-    vu30.Refresh(vu10, 1, function(p36)
-        local v37, v38, v39 = ipairs(vu9)
-        while true do
-            local v40
-            v39, v40 = v37(v38, v39)
-            if v39 == nil then
-                break
-            end
-            if v40.name == p36 then
-                vu11 = v40.id
-                break
-            end
-        end
-    end)
-    vu24()
+local ProductDropdown = ProductsSection:CreateDropdown(
+	"Select Product",
+	{
+		"Loading....",
+	},
+	1,
+	function(SelectedProductName)
+		local ProductIterator, ProductList, Index = ipairs(ProductsList)
+		while true do
+			local ToggleInfo
+			Index, ToggleInfo = ProductIterator(ProductList, Index)
+			if Index == nil then
+				break
+			end
+			if ToggleInfo.name == SelectedProductName then
+				SelectedProductId = ToggleInfo.ProductId
+				break
+			end
+		end
+	end
+)
+local function RefreshProducts()
+	ProductsList = {}
+	ProductNames = {}
+	local DeveloperProducts = MarketplaceService:GetDeveloperProductsAsync()
+	local ProductIterator, ProductTable, ProductIndex = pairs(DeveloperProducts:GetCurrentPage())
+	while true do
+		local ProductInfo
+		ProductIndex, ProductInfo = ProductIterator(ProductTable, ProductIndex)
+		if ProductIndex == nil then
+			break
+		end
+		table.insert(ProductsList, {
+			ProductId = ProductInfo.ProductId,
+			name = ProductInfo.Name,
+			price = ProductInfo.PriceInRobux or 0,
+		})
+		table.insert(ProductNames, ProductInfo.Name)
+	end
+	ProductDropdown.Refresh(ProductNames, 1, function(SelectedProductName)
+		local IteratorFunction, Table, Index = ipairs(ProductsList)
+		while true do
+			local Value
+			Index, Value = IteratorFunction(Table, Index)
+			if Index == nil then
+				break
+			end
+			if Value.name == SelectedProductName then
+				SelectedProductId = Value.ProductId
+				break
+			end
+		end
+	end)
+	UpdateProductStats()
 end
-v7:CreateButton("Refresh", function()
-    vu41()
-    Library:CreateNotification("Info", "Dropdown has been refreshed", 2)
+ProductsSection:CreateButton("Refresh", function()
+	RefreshProducts()
+	Library:CreateNotification("Info", "Dropdown has been refreshed", 2)
 end)
-v7:CreateButton("Buy Product", function()
-    if vu11 then
-        vu1:SignalPromptProductPurchaseFinished(vu2.UserId, vu11, true)
-        vu13 = vu13 + 1
-        vu24()
-    else
-        Library:CreateNotification("Error", "Please select something.", 3)
-    end
+ProductsSection:CreateButton("Buy Product", function()
+	if SelectedProductId then
+		MarketplaceService:SignalPromptProductPurchaseFinished(LocalPlayer.UserId, SelectedProductId, true)
+		ProductsPurchasedCount = ProductsPurchasedCount + 1
+		UpdateProductStats()
+	else
+		Library:CreateNotification("Error", "Please select something.", 3)
+	end
 end)
-v7:CreateButton("Buy All Products", function()
-    if # vu9 <= 0 then
-        Library:CreateNotification("Error", "I can\'t find any products", 3)
-    else
-        local v42, v43, v44 = ipairs(vu9)
-        while true do
-            local v45
-            v44, v45 = v42(v43, v44)
-            if v44 == nil then
-                break
-            end
-            vu1:SignalPromptProductPurchaseFinished(vu2.UserId, v45.id, true)
-            vu13 = vu13 + 1
-        end
-        vu24()
-    end
+ProductsSection:CreateButton("Buy All Products", function()
+	if #ProductsList <= 0 then
+		Library:CreateNotification("Error", "I can't find any products", 3)
+	else
+		local IteratorFunction, Table, Index = ipairs(ProductsList)
+		while true do
+			local ProductId
+			Index, ProductId = IteratorFunction(Table, Index)
+			if Index == nil then
+				break
+			end
+			MarketplaceService:SignalPromptProductPurchaseFinished(LocalPlayer.UserId, ProductId.ProductId, true)
+			ProductsPurchasedCount = ProductsPurchasedCount + 1
+		end
+		UpdateProductStats()
+	end
 end)
-v7:CreateToggle("Auto Buy Selected", function(p46)
-    vu12 = p46
-    if vu12 then
-        while vu12 do
-            if vu11 then
-                vu1:SignalPromptProductPurchaseFinished(vu2.UserId, vu11, true)
-                vu13 = vu13 + 1
-                vu24()
-            end
-            task.wait()
-        end
-    end
+ProductsSection:CreateToggle("Auto Buy Selected", function(IsToggled)
+	AutoBuyEnabled = IsToggled
+	if AutoBuyEnabled then
+		while AutoBuyEnabled do
+			if SelectedProductId then
+				MarketplaceService:SignalPromptProductPurchaseFinished(LocalPlayer.UserId, SelectedProductId, true)
+				ProductsPurchasedCount = ProductsPurchasedCount + 1
+				UpdateProductStats()
+			end
+			task.wait()
+		end
+	end
 end, "Automatically buys the selected product")
-v7:CreateButton("Copy Selected Product ID", function()
-    if vu11 then
-        if pcall(function()
-            setclipboard(tostring(vu11))
-        end) then
-            Library:CreateNotification("Copied", "Product ID " .. vu11 .. " copied to clipboard", 3)
-        else
-            Library:CreateNotification("Error", "Executor doesn\'t support clipboard copy. Product ID printed to output", 3)
-            print("Product ID:", vu11)
-        end
-    else
-        Library:CreateNotification("Warning", "No product selected", 2)
-    end
+ProductsSection:CreateButton("Copy Selected Product ID", function()
+	if SelectedProductId then
+		if pcall(function()
+			setclipboard(tostring(SelectedProductId))
+		end) then
+			Library:CreateNotification("Copied", "Product ID " .. SelectedProductId .. " copied to clipboard", 3)
+		else
+			Library:CreateNotification(
+				"Error",
+				"Executor doesn't support clipboard copy. Product ID printed to output",
+				3
+			)
+			print("Product ID:", SelectedProductId)
+		end
+	else
+		Library:CreateNotification("Warning", "No product selected", 2)
+	end
 end)
-vu41()
-v8:CreateButton("Hook Product Id", function()
-    local vu47 = getrawmetatable(game)
-    if pcall(function()
-        setreadonly(vu47, false)
-    end) then
-        local vu48 = vu47.__namecall
-        vu47.__namecall = newcclosure(function(p49, ...)
-            local vu50 = getnamecallmethod() == "PromptProductPurchase" and ({
-                ...
-            })[2]
-            if vu50 then
-                if pcall(function()
-                    setclipboard(tostring(vu50))
-                end) then
-                    Library:CreateNotification("Product Id Hooker", tostring(vu50) .. " has been copied to clipboard", 3)
-                else
-                    print("Product ID:", vu50)
-                    Library:CreateNotification("Product Id Hooker", "Executor doesn\'t support setclipboard. Product ID " .. tostring(vu50) .. " printed to output", 5)
-                end
-            end
-            return vu48(p49, ...)
-        end)
-        setreadonly(vu47, true)
-        Library:CreateNotification("Hook Activated", "Hook Product ID is now active. Please click a product to hook its ID", 5)
-    else
-        Library:CreateNotification("Error", "Failed to modify metatable", 3)
-    end
+RefreshProducts()
+ProductStatisticsSection:CreateButton("Hook Product Id", function()
+	local GameMetatable = getrawmetatable(game)
+	if pcall(function()
+		setreadonly(GameMetatable, false)
+	end) then
+		local OriginalNamecall = GameMetatable.Namecall
+		GameMetatable.Namecall = newcclosure(function(SelfInstance, ...)
+			local ProductId = getnamecallmethod() == "PromptProductPurchase" and ({
+				...,
+			})[2]
+			if ProductId then
+				if pcall(function()
+					setclipboard(tostring(ProductId))
+				end) then
+					Library:CreateNotification(
+						"Product Id Hooker",
+						tostring(ProductId) .. " has been copied to clipboard",
+						3
+					)
+				else
+					print("Product ID:", ProductId)
+					Library:CreateNotification(
+						"Product Id Hooker",
+						"Executor doesn't support setclipboard. Product ID "
+							.. tostring(ProductId)
+							.. " printed to output",
+						5
+					)
+				end
+			end
+			return OriginalNamecall(SelfInstance, ...)
+		end)
+		setreadonly(GameMetatable, true)
+		Library:CreateNotification(
+			"Hook Activated",
+			"Hook Product ID is now active. Please click a product to hook its ID",
+			5
+		)
+	else
+		Library:CreateNotification("Error", "Failed to modify metatable", 3)
+	end
 end)
-local vu51 = nil
-v8:CreateTextBox("Product ID Input", 20, "Enter Product ID", function(p52)
-    vu51 = tonumber(p52)
-    if not vu51 then
-        Library:CreateNotification("Warning", "Please enter a valid number", 2)
-    end
+local InputProductId = nil
+ProductStatisticsSection:CreateTextBox("Product ID Input", 20, "Enter Product ID", function(InputText)
+	InputProductId = tonumber(InputText)
+	if not InputProductId then
+		Library:CreateNotification("Warning", "Please enter a valid number", 2)
+	end
 end)
-v8:CreateButton("Add Product to Dropdown", function()
-    if vu51 then
-        local vu53 = "Unknown Product (ID: " .. vu51 .. ")"
-        local function vu58(pu54, p55)
-            for _ = 1, p55 do
-                local v56, v57 = pcall(function()
-                    return vu1:GetProductInfo(pu54)
-                end)
-                if v56 and (v57 and v57.Name) then
-                    return v57
-                end
-                task.wait(1.5 + math.random())
-            end
-            return nil
-        end
-        task.spawn(function()
-            local v59 = vu58(vu51, 3)
-            if v59 and v59.Name then
-                vu53 = v59.Name
-            else
-                Library:CreateNotification("Warning", "Failed to fetch product info. Will use fallback name.", 3)
-            end
-            local v60, v61, v62 = ipairs(vu9)
-            while true do
-                local v63
-                v62, v63 = v60(v61, v62)
-                if v62 == nil then
-                    break
-                end
-                if v63.id == vu51 then
-                    Library:CreateNotification("Info", "Product " .. vu53 .. " is already in the dropdown", 3)
-                    return
-                end
-            end
-            table.insert(vu9, {
-                id = vu51,
-                name = vu53,
-                price = v59 and v59.PriceInRobux or 0
-            })
-            table.insert(vu10, vu53)
-            vu30.Refresh(vu10, 1, function(p64)
-                local v65, v66, v67 = ipairs(vu9)
-                while true do
-                    local v68
-                    v67, v68 = v65(v66, v67)
-                    if v67 == nil then
-                        break
-                    end
-                    if v68.name == p64 then
-                        vu11 = v68.id
-                        break
-                    end
-                end
-            end)
-            vu24()
-            Library:CreateNotification("Success", "Added " .. vu53 .. " to dropdown", 3)
-        end)
-    else
-        Library:CreateNotification("Error", "Please enter a valid Product ID (numbers only)", 3)
-    end
+ProductStatisticsSection:CreateButton("Add Product to Dropdown", function()
+	if InputProductId then
+		local ProductName = "Unknown Product (ID: " .. InputProductId .. ")"
+		local function GetProductInfoWithRetry(ProductId, MaxRetries)
+			for UnusedParameter = 1, MaxRetries do
+				local Success, ProductInfo = pcall(function()
+					return MarketplaceService:GetProductInfo(ProductId)
+				end)
+				if Success and (ProductInfo and ProductInfo.Name) then
+					return ProductInfo
+				end
+				task.wait(1.5 + math.random())
+			end
+			return nil
+		end
+		task.spawn(function()
+			local ProductInfoResult = GetProductInfoWithRetry(InputProductId, 3)
+			if ProductInfoResult and ProductInfoResult.Name then
+				ProductName = ProductInfoResult.Name
+			else
+				Library:CreateNotification("Warning", "Failed to fetch product info. Will use fallback name.", 3)
+			end
+			local IteratorFunction, TableToIterate, CurrentIndex = ipairs(ProductsList)
+			while true do
+				local ProductId
+				CurrentIndex, ProductId = IteratorFunction(TableToIterate, CurrentIndex)
+				if CurrentIndex == nil then
+					break
+				end
+				if ProductId.ProductId == InputProductId then
+					Library:CreateNotification("Info", "Product " .. ProductName .. " is already in the dropdown", 3)
+					return
+				end
+			end
+			table.insert(ProductsList, {
+				ProductId = InputProductId,
+				name = ProductName,
+				price = ProductInfoResult and ProductInfoResult.PriceInRobux or 0,
+			})
+			table.insert(ProductNames, ProductName)
+			ProductDropdown.Refresh(ProductNames, 1, function(SelectedProductName)
+				local ProductIterator, ProductTable, ProductIndex = ipairs(ProductsList)
+				while true do
+					local ProductInfo
+					ProductIndex, ProductInfo = ProductIterator(ProductTable, ProductIndex)
+					if ProductIndex == nil then
+						break
+					end
+					if ProductInfo.name == SelectedProductName then
+						SelectedProductId = ProductInfo.ProductId
+						break
+					end
+				end
+			end)
+			UpdateProductStats()
+			Library:CreateNotification("Success", "Added " .. ProductName .. " to dropdown", 3)
+		end)
+	else
+		Library:CreateNotification("Error", "Please enter a valid Product ID (numbers only)", 3)
+	end
 end)
-local vu69 = game:GetService("HttpService")
-local v70 = game:GetService("Players")
-local vu71 = game:GetService("MarketplaceService")
-local vu72 = v70.LocalPlayer
-local vu73 = game.PlaceId
-local vu74 = false
-local vu75 = nil
-local vu76 = {}
-local vu77 = 0
-local v78 = v3:CreateTab("Gamepass")
-local v79 = v78:CreateSection("Main")
-local v80 = v78:CreateSection("Statistic")
-local vu81 = v80:CreateLabel("Cheapest", "Cheapest Gamepass:\nN/A")
-v80:CreateLabel(" Sperator", "---------------")
-local vu82 = v80:CreateLabel("MostExp", "Most Expensive Gamepass:\nN/A")
-v80:CreateLabel("sperator", "---------------")
-local vu83 = v80:CreateLabel("TotalPurchased", "Gamepass Purchased: 0")
-local function v91(pu84, pu85, pu86, pu87, pu88)
-    local v89, v90 = pcall(function()
-        return pu84:CreateDropdown(pu85, pu86, pu87, pu88)
-    end)
-    return v89 and v90 and v90 or nil
+local HttpService = game:GetService("HttpService")
+local PlayersService = game:GetService("Players")
+local MarketplaceService = game:GetService("MarketplaceService")
+local LocalPlayer = PlayersService.LocalPlayer
+local CurrentPlaceId = game.PlaceId
+local AutoBuyEnabled = false
+local SelectedGamepassId = nil
+local GamepassNameToIdMap = {}
+local GamepassPurchaseCount = 0
+local GamepassTab = Library:CreateTab("Gamepass")
+local GamepassMainSection = GamepassTab:CreateSection("Main")
+local GamepassStatisticSection = GamepassTab:CreateSection("Statistic")
+local CheapestGamepassLabel = GamepassStatisticSection:CreateLabel("Cheapest", "Cheapest Gamepass:\nN/A")
+GamepassStatisticSection:CreateLabel(" Sperator", "---------------")
+local MostExpensiveGamepassLabel = GamepassStatisticSection:CreateLabel("MostExp", "Most Expensive Gamepass:\nN/A")
+GamepassStatisticSection:CreateLabel("sperator", "---------------")
+local TotalPurchasedLabel = GamepassStatisticSection:CreateLabel("TotalPurchased", "Gamepass Purchased: 0")
+local function CreateDropdownSafely(UiElement, DropdownName, DropdownOptions, DefaultIndex, CallbackFunction)
+	local Success, DropdownInstance = pcall(function()
+		return UiElement:CreateDropdown(DropdownName, DropdownOptions, DefaultIndex, CallbackFunction)
+	end)
+	return Success and DropdownInstance and DropdownInstance or nil
 end
-local function vu96(pu92, pu93, pu94, pu95)
-    if pu92 then
-        pcall(function()
-            pu92.Refresh(pu93, pu94, pu95)
-        end)
-    end
+local function RefreshDropdown(Dropdown, Options, DefaultIndex, Callback)
+	if Dropdown then
+		pcall(function()
+			Dropdown.Refresh(Options, DefaultIndex, Callback)
+		end)
+	end
 end
-local function vu99(pu97, pu98)
-    if pu97 then
-        pcall(function()
-            pu97.Refresh(pu98)
-        end)
-    end
+local function RefreshDropdown(DropdownRef, DropdownData)
+	if DropdownRef then
+		pcall(function()
+			DropdownRef.Refresh(DropdownData)
+		end)
+	end
 end
-local function vu103(pu100)
-    local v101, v102 = pcall(function()
-        return vu69:JSONDecode((game:HttpGet("https://apis.roblox.com/universes/v1/places/" .. pu100 .. "/universe"))).universeId
-    end)
-    return v101 and v102 and v102 or nil
+local function FetchUniverseData(PlaceId)
+	local FetchSuccess, FetchedData = pcall(function()
+		return HttpService:JSONDecode(
+			(game:HttpGet("https://apis.roblox.com/universes/v1/places/" .. PlaceId .. "/universe"))
+		).universeId
+	end)
+	return FetchSuccess and FetchedData and FetchedData or nil
 end
-local function vu108(pu104)
-    local v106, v107 = pcall(function()
-        local v105 = "https://games.roblox.com/v1/games/" .. pu104 .. "/game-passes?page=1&limit=100"
-        return vu69:JSONDecode((game:HttpGet(v105))).data
-    end)
-    return v106 and v107 and v107 or {}
+local function ExtractUniverseId(GameId)
+	local Success, GamePassesResult = pcall(function()
+		local GamePassesUrl = "https://games.roblox.com/v1/games/" .. GameId .. "/game-passes?page=1&limit=100"
+		return HttpService:JSONDecode((game:HttpGet(GamePassesUrl))).data
+	end)
+	return Success and GamePassesResult and GamePassesResult or {}
 end
-local function vu110(pu109)
-    pcall(function()
-        vu71:SignalPromptGamePassPurchaseFinished(vu72, pu109, true)
-        print(pu109)
-    end)
-    vu77 = vu77 + 1
-    vu83.Refresh("Gamepass Purchased: " .. vu77)
+local function PurchaseGamePass(GamePassId)
+	pcall(function()
+		MarketplaceService:SignalPromptGamePassPurchaseFinished(LocalPlayer, GamePassId, true)
+		print(GamePassId)
+	end)
+	GamepassPurchaseCount = GamepassPurchaseCount + 1
+	TotalPurchasedLabel.Refresh("Gamepass Purchased: " .. GamepassPurchaseCount)
 end
-local vu111 = nil
-local vu112 = {}
-local v113 = vu103(vu73)
-if v113 then
-    local v114 = vu108(v113)
-    local v115 = {
-        name = nil,
-        price = math.huge
-    }
-    local v116 = {
-        name = nil,
-        price = - math.huge
-    }
-    local v117, v118, v119 = ipairs(v114)
-    vu112 = {}
-    while true do
-        local v120, v121 = v117(v118, v119)
-        if v120 == nil then
-            break
-        end
-        v119 = v120
-        if v121.id and (v121.displayName and v121.price) then
-            table.insert(vu112, v121.displayName)
-            vu76[v121.displayName] = v121.id
-            v115 = v121.price < v115.price and {
-                name = v121.displayName,
-                price = v121.price
-            } or v115
-            if v121.price > v116.price then
-                v116 = {
-                    name = v121.displayName,
-                    price = v121.price
-                }
-            end
-        end
-    end
-    if v115.name then
-        vu81.Refresh("Cheapest Gamepass:\n " .. v115.name .. " (" .. v115.price .. " Robux)")
-    end
-    if v116.name then
-        vu82.Refresh("Most Expensive Gamepass:\n " .. v116.name .. " (" .. v116.price .. " Robux)")
-    end
-    local vu123 = v91(v79, "Select Gamepass", vu112, 1, function(p122)
-        vu75 = vu76[p122]
-    end)
-    v79:CreateButton("Refresh Dropdown", function()
-        local v124 = vu103(vu73)
-        if v124 then
-            local v125 = vu108(v124)
-            table.clear(vu76)
-            local v126 = {
-                name = nil,
-                price = math.huge
-            }
-            local v127 = {
-                name = nil,
-                price = - math.huge
-            }
-            local v128, v129, v130 = ipairs(v125)
-            local v131 = {}
-            while true do
-                local v132
-                v130, v132 = v128(v129, v130)
-                if v130 == nil then
-                    break
-                end
-                if v132.id and (v132.displayName and v132.price) then
-                    table.insert(v131, v132.displayName)
-                    vu76[v132.displayName] = v132.id
-                    v126 = v132.price < v126.price and {
-                        name = v132.displayName,
-                        price = v132.price
-                    } or v126
-                    if v132.price > v127.price then
-                        v127 = {
-                            name = v132.displayName,
-                            price = v132.price
-                        }
-                    end
-                end
-            end
-            vu96(vu123, v131, 1, function(p133)
-                vu75 = vu76[p133]
-            end)
-            vu99(vu81, "Cheapest Gamepass:\n " .. (v126.name or "N/A") .. " (" .. (v126.price or "?") .. " Robux)")
-            vu99(vu82, "Most Expensive Gamepass:\n " .. (v127.name or "N/A") .. " (" .. (v127.price or "?") .. " Robux)")
-        end
-    end)
-    v79:CreateButton("Buy Gamepass", function()
-        if vu75 then
-            vu110(vu75)
-        end
-    end)
-    v79:CreateButton("Buy All Gamepasses", function()
-        local v134, v135, v136 = pairs(vu76)
-        while true do
-            local v137
-            v136, v137 = v134(v135, v136)
-            if v136 == nil then
-                break
-            end
-            vu110(v137)
-            task.wait(0.1)
-        end
-    end)
-    v79:CreateToggle("Auto Buy Selected", function(p138)
-        vu74 = p138
-    end)
-    v79:CreateButton("Copy Selected Gamepass Id", function()
-        if vu75 then
-            local v139 = {
-                function()
-                    warn("nothing")
-                end,
-                function()
-                    setclipboard(tostring(vu75))
-                end
-            }
-            Library:CreateNotification("Idk hub", "Gamepass Id (" .. tostring(vu75) .. ")has been copied into your clipboard.", {
-                "Thank you",
-                "Copy Gamepass Id"
-            }, 5, v139)
-            setclipboard(tostring(vu75))
-        end
-    end)
-    task.spawn(function()
-        while true do
-            if vu74 and vu75 then
-                vu110(vu75)
-            end
-            task.wait()
-        end
-    end)
-    vu111 = vu123
+local DropdownInstance = nil
+local GamepassNames = {}
+local GamepassesResponse = FetchUniverseData(CurrentPlaceId)
+if GamepassesResponse then
+	local GamepassesList = ExtractUniverseId(GamepassesResponse)
+	local CheapestGamepass = {
+		name = nil,
+		price = math.Infinity,
+	}
+	local MostExpensiveGamepass = {
+		name = nil,
+		price = -math.Infinity,
+	}
+	local GamepassIterator, GamepassList, CurrentIndex = ipairs(GamepassesList)
+	GamepassNames = {}
+	while true do
+		local CurrentGamepassIndex, CurrentGamepassData = GamepassIterator(GamepassList, CurrentIndex)
+		if CurrentGamepassIndex == nil then
+			break
+		end
+		CurrentIndex = CurrentGamepassIndex
+		if CurrentGamepassData.ProductId and (CurrentGamepassData.displayName and CurrentGamepassData.price) then
+			table.insert(GamepassNames, CurrentGamepassData.displayName)
+			GamepassNameToIdMap[CurrentGamepassData.displayName] = CurrentGamepassData.ProductId
+			CheapestGamepass = CurrentGamepassData.price < CheapestGamepass.price
+					and {
+						name = CurrentGamepassData.displayName,
+						price = CurrentGamepassData.price,
+					}
+				or CheapestGamepass
+			if CurrentGamepassData.price > MostExpensiveGamepass.price then
+				MostExpensiveGamepass = {
+					name = CurrentGamepassData.displayName,
+					price = CurrentGamepassData.price,
+				}
+			end
+		end
+	end
+	if CheapestGamepass.name then
+		CheapestGamepassLabel.Refresh(
+			"Cheapest Gamepass:\n " .. CheapestGamepass.name .. " (" .. CheapestGamepass.price .. " Robux)"
+		)
+	end
+	if MostExpensiveGamepass.name then
+		MostExpensiveGamepassLabel.Refresh(
+			"Most Expensive Gamepass:\n "
+				.. MostExpensiveGamepass.name
+				.. " ("
+				.. MostExpensiveGamepass.price
+				.. " Robux)"
+		)
+	end
+	local GamepassDropdown = CreateDropdownSafely(
+		GamepassMainSection,
+		"Select Gamepass",
+		GamepassNames,
+		1,
+		function(SelectedGamepassIndex)
+			SelectedGamepassId = GamepassNameToIdMap[SelectedGamepassIndex]
+		end
+	)
+	GamepassMainSection:CreateButton("Refresh Dropdown", function()
+		local GamepassesData = FetchUniverseData(CurrentPlaceId)
+		if GamepassesData then
+			local GamepassesList = ExtractUniverseId(GamepassesData)
+			table.clear(GamepassNameToIdMap)
+			local CheapestGamepass = {
+				name = nil,
+				price = math.Infinity,
+			}
+			local MostExpensiveGamepass = {
+				name = nil,
+				price = -math.Infinity,
+			}
+			local IteratorFunction, Index, Value = ipairs(GamepassesList)
+			local ItemNames = {}
+			while true do
+				local GamePassData
+				Value, GamePassData = IteratorFunction(Index, Value)
+				if Value == nil then
+					break
+				end
+				if GamePassData.ProductId and (GamePassData.displayName and GamePassData.price) then
+					table.insert(ItemNames, GamePassData.displayName)
+					GamepassNameToIdMap[GamePassData.displayName] = GamePassData.ProductId
+					CheapestGamepass = GamePassData.price < CheapestGamepass.price
+							and {
+								name = GamePassData.displayName,
+								price = GamePassData.price,
+							}
+						or CheapestGamepass
+					if GamePassData.price > MostExpensiveGamepass.price then
+						MostExpensiveGamepass = {
+							name = GamePassData.displayName,
+							price = GamePassData.price,
+						}
+					end
+				end
+			end
+			RefreshDropdown(GamepassDropdown, ItemNames, 1, function(SelectedIndex)
+				SelectedGamepassId = GamepassNameToIdMap[SelectedIndex]
+			end)
+			RefreshDropdown(
+				CheapestGamepassLabel,
+				"Cheapest Gamepass:\n "
+					.. (CheapestGamepass.name or "N/A")
+					.. " ("
+					.. (CheapestGamepass.price or "?")
+					.. " Robux)"
+			)
+			RefreshDropdown(
+				MostExpensiveGamepassLabel,
+				"Most Expensive Gamepass:\n "
+					.. (MostExpensiveGamepass.name or "N/A")
+					.. " ("
+					.. (MostExpensiveGamepass.price or "?")
+					.. " Robux)"
+			)
+		end
+	end)
+	GamepassMainSection:CreateButton("Buy Gamepass", function()
+		if SelectedGamepassId then
+			PurchaseGamePass(SelectedGamepassId)
+		end
+	end)
+	GamepassMainSection:CreateButton("Buy All Gamepasses", function()
+		local IterateFunction, GamepassesTable, CurrentKey = pairs(GamepassNameToIdMap)
+		while true do
+			local GamepassId
+			CurrentKey, GamepassId = IterateFunction(GamepassesTable, CurrentKey)
+			if CurrentKey == nil then
+				break
+			end
+			PurchaseGamePass(GamepassId)
+			task.wait(0.1)
+		end
+	end)
+	GamepassMainSection:CreateToggle("Auto Buy Selected", function(IsToggled)
+		AutoBuyEnabled = IsToggled
+	end)
+	GamepassMainSection:CreateButton("Copy Selected Gamepass Id", function()
+		if SelectedGamepassId then
+			local CopyFunctionTable = {
+				function()
+					warn("nothing")
+				end,
+				function()
+					setclipboard(tostring(SelectedGamepassId))
+				end,
+			}
+			Library:CreateNotification(
+				"Idk hub",
+				"Gamepass Id (" .. tostring(SelectedGamepassId) .. ")has been copied into your clipboard.",
+				{
+					"Thank you",
+					"Copy Gamepass Id",
+				},
+				5,
+				CopyFunctionTable
+			)
+			setclipboard(tostring(SelectedGamepassId))
+		end
+	end)
+	task.spawn(function()
+		while true do
+			if AutoBuyEnabled and SelectedGamepassId then
+				PurchaseGamePass(SelectedGamepassId)
+			end
+			task.wait()
+		end
+	end)
+	DropdownInstance = GamepassDropdown
 else
-    print("Failed")
+	print("Failed")
 end
-local vu140 = nil
-v80:CreateButton("Hook Gamepass Id", function()
-    Library:CreateNotification("Hookers", "Hook active! Click a gamepass to copy its ID", 5)
-    vu71.PromptGamePassPurchaseFinished:Connect(function(p141, p142, _)
-        if p141 == vu72 then
-            vu140 = p142
-            setclipboard(tostring(vu140))
-            local v143 = {
-                function()
-                    setclipboard(tostring(vu140))
-                end
-            }
-            Library:CreateNotification("Hooked!", "Hooked Gamepass ID: " .. tostring(vu140), 6, {
-                "OK"
-            }, v143)
-        end
-    end)
+local HookedGamepassId = nil
+GamepassStatisticSection:CreateButton("Hook Gamepass Id", function()
+	Library:CreateNotification("Hookers", "Hook active! Click a gamepass to copy its ID", 5)
+	MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(Player, GamepassId, UnusedParameter)
+		if Player == LocalPlayer then
+			HookedGamepassId = GamepassId
+			setclipboard(tostring(HookedGamepassId))
+			local NotificationCallbacks = {
+				function()
+					setclipboard(tostring(HookedGamepassId))
+				end,
+			}
+			Library:CreateNotification("Hooked!", "Hooked Gamepass ID: " .. tostring(HookedGamepassId), 6, {
+				"OK",
+			}, NotificationCallbacks)
+		end
+	end)
 end)
-local vu144 = ""
-v80:CreateTextBox("Manual Gamepass ID", 12, "Input ID", function(p145)
-    vu144 = p145
+local ManualGamepassIdInput = ""
+GamepassStatisticSection:CreateTextBox("Manual Gamepass ID", 12, "Input ID", function(InputText)
+	ManualGamepassIdInput = InputText
 end)
-v80:CreateButton("Add Gamepass ID to Dropdown", function()
-    if vu144 ~= "" then
-        local v146 = "Manual_" .. vu144
-        vu76[v146] = tonumber(vu144)
-        table.insert(vu112, v146)
-        vu111.Refresh(vu112, # vu112, function(p147)
-            vu75 = vu76[p147]
-        end)
-    end
+GamepassStatisticSection:CreateButton("Add Gamepass ID to Dropdown", function()
+	if ManualGamepassIdInput ~= "" then
+		local ManualOptionName = "Manual_" .. ManualGamepassIdInput
+		GamepassNameToIdMap[ManualOptionName] = tonumber(ManualGamepassIdInput)
+		table.insert(GamepassNames, ManualOptionName)
+		DropdownInstance.Refresh(GamepassNames, #GamepassNames, function(SelectedOptionCallback)
+			SelectedGamepassId = GamepassNameToIdMap[SelectedOptionCallback]
+		end)
+	end
 end)
-local v148 = v3:CreateTab("Teleporter")
-local v149 = v3:CreateTab("Misc")
-local v150 = v149:CreateSection("Misc")
-local v151 = v149:CreateSection("Universal")
-local vu152 = game.Players.LocalPlayer
-local vu153 = workspace.CurrentCamera
-local vu154 = game:GetService("RunService")
-local vu155 = game:GetService("TeleportService")
-local vu156 = game:GetService("StarterGui")
-local vu157 = game:GetService("UserInputService")
-local vu158 = game:GetService("HttpService")
-local vu159 = game:GetService("Players")
-local vu160 = game:GetService("Lighting")
-local vu161 = false
-local vu162 = 16
-v150:CreateSlider("Walkspeed", 16, 2500, 16, false, function(p163)
-    vu162 = p163
-    if vu161 then
-        local v164 = vu152.Character
-        if v164 and v164:FindFirstChild("Humanoid") then
-            v164.Humanoid.WalkSpeed = p163
-        end
-    end
+local TeleporterTab = Library:CreateTab("Teleporter")
+local MiscTab = Library:CreateTab("Misc")
+local MiscSection = MiscTab:CreateSection("Misc")
+local UniversalSection = MiscTab:CreateSection("Universal")
+local LocalPlayer = game.Players.LocalPlayer
+local CurrentCamera = workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+local TeleportService = game:GetService("TeleportService")
+local StarterGui = game:GetService("StarterGui")
+local UserInputService = game:GetService("UserInputService")
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
+local IsWalkSpeedEnabled = false
+local WalkSpeedValue = 16
+MiscSection:CreateSlider("Walkspeed", 16, 2500, 16, false, function(WalkSpeedValue)
+	WalkSpeedValue = WalkSpeedValue
+	if IsWalkSpeedEnabled then
+		local PlayerCharacter = LocalPlayer.Character
+		if PlayerCharacter and PlayerCharacter:FindFirstChild("Humanoid") then
+			PlayerCharacter.Humanoid.WalkSpeed = WalkSpeedValue
+		end
+	end
 end)
-v150:CreateToggle("Enable Walkspeed", function(p165)
-    vu161 = p165
-    local vu166 = vu152.Character
-    task.spawn(function()
-        while vu161 do
-            if vu166 and vu166:FindFirstChild("Humanoid") then
-                vu166.Humanoid.WalkSpeed = vu162
-            end
-            task.wait(0.1)
-        end
-        if vu166 and vu166:FindFirstChild("Humanoid") then
-            vu166.Humanoid.WalkSpeed = 16
-        end
-    end)
+MiscSection:CreateToggle("Enable Walkspeed", function(IsWalkSpeedEnabled)
+	IsWalkSpeedEnabled = IsWalkSpeedEnabled
+	local CurrentCharacter = LocalPlayer.Character
+	task.spawn(function()
+		while IsWalkSpeedEnabled do
+			if CurrentCharacter and CurrentCharacter:FindFirstChild("Humanoid") then
+				CurrentCharacter.Humanoid.WalkSpeed = WalkSpeedValue
+			end
+			task.wait(0.1)
+		end
+		if CurrentCharacter and CurrentCharacter:FindFirstChild("Humanoid") then
+			CurrentCharacter.Humanoid.WalkSpeed = 16
+		end
+	end)
 end)
-v150:CreateToggle("Anti-AFK", function(p167)
-    if p167 then
-        print("Afk: Turned on!")
-        local vu168 = game:GetService("VirtualUser")
-        vu152.Idled:Connect(function()
-            vu168:CaptureController()
-            vu168:ClickButton2(Vector2.new())
-            print("AFK: Active!")
-        end)
-    else
-        print("Afk: off")
-    end
+MiscSection:CreateToggle("Anti-AFK", function(IsAntiAFKEnabled)
+	if IsAntiAFKEnabled then
+		print("Afk: Turned on!")
+		local VirtualUserService = game:GetService("VirtualUser")
+		LocalPlayer.Idled:Connect(function()
+			VirtualUserService:CaptureController()
+			VirtualUserService:ClickButton2(Vector2.new())
+			print("AFK: Active!")
+		end)
+	else
+		print("Afk: off")
+	end
 end)
-v150:CreateToggle("White Screen", function(p169)
-    if p169 then
-        local v170 = Instance.new("ScreenGui")
-        v170.Name = "WhiteScreen"
-        v170.IgnoreGuiInset = true
-        v170.Parent = game.CoreGui
-        local v171 = Instance.new("Frame", v170)
-        v171.Size = UDim2.new(1, 0, 1, 0)
-        v171.Position = UDim2.new(0, 0, 0, 0)
-        v171.BackgroundColor3 = Color3.new(1, 1, 1)
-        v171.BorderSizePixel = 0
-        v171.ZIndex = 0
-    elseif game.CoreGui:FindFirstChild("WhiteScreen") then
-        game.CoreGui.WhiteScreen:Destroy()
-    end
+MiscSection:CreateToggle("White Screen", function(IsWhiteScreenEnabled)
+	if IsWhiteScreenEnabled then
+		local WhiteScreenGui = Instance.new("ScreenGui")
+		WhiteScreenGui.Name = "WhiteScreen"
+		WhiteScreenGui.IgnoreGuiInset = true
+		WhiteScreenGui.Parent = game.CoreGui
+		local WhiteScreenFrame = Instance.new("Frame", WhiteScreenGui)
+		WhiteScreenFrame.Size = UDim2.new(1, 0, 1, 0)
+		WhiteScreenFrame.Position = UDim2.new(0, 0, 0, 0)
+		WhiteScreenFrame.BackgroundColor3 = Color3.new(1, 1, 1)
+		WhiteScreenFrame.BorderSizePixel = 0
+		WhiteScreenFrame.ZIndex = 0
+	elseif game.CoreGui:FindFirstChild("WhiteScreen") then
+		game.CoreGui.WhiteScreen:Destroy()
+	end
 end)
-v150:CreateButton("FPS Booster", function()
-    local v172 = Instance.new("BindableFunction")
-    function v172.OnInvoke(p173)
-        if p173 == "Yes" then
-            local v174 = game:GetService("Lighting")
-            local v175, v176, v177 = ipairs(v174:GetChildren())
-            while true do
-                local v178
-                v177, v178 = v175(v176, v177)
-                if v177 == nil then
-                    break
-                end
-                if v178:IsA("PostEffect") then
-                    v178:Destroy()
-                end
-            end
-            v174.GlobalShadows = false
-            v174.FogEnd = 9000000000
-            v174.Brightness = 2
-            local v179, v180, v181 = ipairs(workspace:GetDescendants())
-            while true do
-                local v182
-                v181, v182 = v179(v180, v181)
-                if v181 == nil then
-                    break
-                end
-                if v182:IsA("BasePart") and not v182:IsDescendantOf(vu152.Character) then
-                    v182.Material = Enum.Material.SmoothPlastic
-                    v182.Reflectance = 0
-                elseif v182:IsA("Texture") or v182:IsA("Decal") then
-                    v182.Transparency = 1
-                end
-            end
-            local v183 = workspace:FindFirstChild("Terrain")
-            if v183 then
-                v183.WaterWaveSize = 0
-                v183.WaterWaveSpeed = 0
-                v183.WaterReflectance = 0
-                v183.WaterTransparency = 1
-            end
-            settings().Physics.AllowSleep = true
-            settings().Rendering.QualityLevel = 1
-            vu156:SetCore("SendNotification", {
-                Title = "Success",
-                Text = "FPS Booster applied!",
-                Duration = 2
-            })
-        end
-    end
-    vu156:SetCore("SendNotification", {
-        Title = "Confirmation",
-        Text = "Apply FPS Booster?",
-        Duration = 5,
-        Callback = v172,
-        Button1 = "Yes",
-        Button2 = "No"
-    })
+MiscSection:CreateButton("FPS Booster", function()
+	local ConfirmationCallback = Instance.new("BindableFunction")
+	function ConfirmationCallback.OnInvoke(UserResponse)
+		if UserResponse == "Yes" then
+			local LightingService = game:GetService("Lighting")
+			local IteratorFunction, ChildIndex, ChildIndex = ipairs(LightingService:GetChildren())
+			while true do
+				local ChildInstance
+				ChildIndex, ChildInstance = IteratorFunction(ChildIndex, ChildIndex)
+				if ChildIndex == nil then
+					break
+				end
+				if ChildInstance:IsA("PostEffect") then
+					ChildInstance:Destroy()
+				end
+			end
+			LightingService.GlobalShadows = false
+			LightingService.FogEnd = 9000000000
+			LightingService.Brightness = 2
+			local DescendantIterator, DescendantState, DescendantIndex = ipairs(workspace:GetDescendants())
+			while true do
+				local PartOrTexture
+				DescendantIndex, PartOrTexture = DescendantIterator(DescendantState, DescendantIndex)
+				if DescendantIndex == nil then
+					break
+				end
+				if PartOrTexture:IsA("BasePart") and not PartOrTexture:IsDescendantOf(LocalPlayer.Character) then
+					PartOrTexture.Material = Enum.Material.SmoothPlastic
+					PartOrTexture.Reflectance = 0
+				elseif PartOrTexture:IsA("Texture") or PartOrTexture:IsA("Decal") then
+					PartOrTexture.Transparency = 1
+				end
+			end
+			local TerrainInstance = workspace:FindFirstChild("Terrain")
+			if TerrainInstance then
+				TerrainInstance.WaterWaveSize = 0
+				TerrainInstance.WaterWaveSpeed = 0
+				TerrainInstance.WaterReflectance = 0
+				TerrainInstance.WaterTransparency = 1
+			end
+			settings().Physics.AllowSleep = true
+			settings().Rendering.QualityLevel = 1
+			StarterGui:SetCore("SendNotification", {
+				Title = "Success",
+				Text = "FPS Booster applied!",
+				Duration = 2,
+			})
+		end
+	end
+	StarterGui:SetCore("SendNotification", {
+		Title = "Confirmation",
+		Text = "Apply FPS Booster?",
+		Duration = 5,
+		Callback = ConfirmationCallback,
+		Button1 = "Yes",
+		Button2 = "No",
+	})
 end)
-local vu184 = game:GetService("Players")
-local vu185 = vu184.LocalPlayer
+local PlayersService = game:GetService("Players")
+local LocalPlayer = PlayersService.LocalPlayer
 game:GetService("MarketplaceService")
-local function vu192()
-    local v186 = vu184
-    local v187, v188, v189 = ipairs(v186:GetPlayers())
-    local v190 = {}
-    while true do
-        local v191
-        v189, v191 = v187(v188, v189)
-        if v189 == nil then
-            break
-        end
-        if v191 ~= vu185 then
-            table.insert(v190, v191.Name)
-        end
-    end
-    return v190
+local function GetPlayerNames()
+	local PlayersService = PlayersService
+	local IteratorFunction, PlayerList, Index = ipairs(PlayersService:GetPlayers())
+	local PlayerNames = {}
+	while true do
+		local CurrentPlayer
+		Index, CurrentPlayer = IteratorFunction(PlayerList, Index)
+		if Index == nil then
+			break
+		end
+		if CurrentPlayer ~= LocalPlayer then
+			table.insert(PlayerNames, CurrentPlayer.Name)
+		end
+	end
+	return PlayerNames
 end
-local function vu196(p193)
-    local v194, v195 = pcall(p193)
-    return v194 and v195 and v195 or "N/A"
+local function SafeCall(CallbackFunction)
+	local Success, Result = pcall(CallbackFunction)
+	return Success and Result and Result or "N/A"
 end
-local function vu233(pu197)
-    local vu198 = {}
-    if pu197.Character then
-        local vu199 = pu197.Character:FindFirstChild("Head")
-        if vu199 then
-            local v200 = {
-                name = "Head",
-                id = vu196(function()
-                    return tostring(vu199:GetAttribute("OriginalSize") or "Default")
-                end)
-            }
-            table.insert(vu198, v200)
-            local vu201 = vu199:FindFirstChild("face")
-            if vu201 then
-                local v202 = {
-                    name = "Face",
-                    id = vu196(function()
-                        return vu201.Texture:match("%d+") or "Default"
-                    end)
-                }
-                table.insert(vu198, v202)
-            end
-        end
-        local v203, v204, v205 = ipairs(pu197.Character:GetChildren())
-        while true do
-            local v206, vu207 = v203(v204, v205)
-            if v206 == nil then
-                break
-            end
-            v205 = v206
-            if vu207:IsA("Accessory") then
-                local v211 = vu196(function()
-                    local v208 = vu207:FindFirstChild("AccessoryId")
-                    if v208 then
-                        return tostring(v208.Value)
-                    end
-                    local v209 = vu207:FindFirstChild("Handle")
-                    local v210 = v209 and (v209:FindFirstChild("Mesh") or v209:FindFirstChild("SpecialMesh"))
-                    return not v210 and "N/A" or tostring(v210.MeshId:match("%d+"))
-                end)
-                table.insert(vu198, {
-                    name = vu207.Name,
-                    id = v211
-                })
-            end
-        end
-        local vu212 = pu197.Character:FindFirstChild("Shirt")
-        if vu212 then
-            local v213 = {
-                name = "Shirt",
-                id = vu196(function()
-                    return vu212.ShirtTemplate:match("%d+") or "None"
-                end)
-            }
-            table.insert(vu198, v213)
-        end
-        local vu214 = pu197.Character:FindFirstChild("Pants")
-        if vu214 then
-            local v215 = {
-                name = "Pants",
-                id = vu196(function()
-                    return vu214.PantsTemplate:match("%d+") or "None"
-                end)
-            }
-            table.insert(vu198, v215)
-        end
-        local vu216 = pu197.Character:FindFirstChild("ShirtGraphic")
-        if vu216 then
-            local v217 = {
-                name = "T-Shirt",
-                id = vu196(function()
-                    return vu216.Graphic:match("%d+") or "None"
-                end)
-            }
-            table.insert(vu198, v217)
-        end
-        local function v221(p218)
-            local vu219 = pu197.Character:FindFirstChild(p218)
-            if vu219 then
-                local v220 = {
-                    name = p218,
-                    id = vu196(function()
-                        return tostring(vu219:GetAttribute("OriginalSize") or "Default")
-                    end)
-                }
-                table.insert(vu198, v220)
-            end
-        end
-        v221("Left Arm")
-        v221("Right Arm")
-        v221("Torso")
-        v221("UpperTorso")
-        local v222 = pu197.Character:FindFirstChild("Humanoid")
-        if v222 and v222:FindFirstChild("Animator") then
-            local v223 = v222.Animator
-            local v224, v225, v226 = ipairs(v223:GetPlayingAnimationTracks())
-            while true do
-                local vu227
-                v226, vu227 = v224(v225, v226)
-                if v226 == nil then
-                    break
-                end
-                local v228 = vu196(function()
-                    return vu227.Animation.AnimationId:match("%d+")
-                end)
-                local v229 = string.lower(vu227.Name)
-                local v230 = v229:match("walk") and "Walk" or (v229:match("run") and "Run" or (v229:match("jump") and "Jump" or (v229:match("idle") and "Idle" or "Other")))
-                table.insert(vu198, {
-                    name = "Animation " .. v230,
-                    id = v228
-                })
-            end
-        end
-        local vu231 = pu197.Character:FindFirstChild("BodyColors")
-        if vu231 then
-            local v232 = {
-                name = "Clothing Package",
-                id = vu196(function()
-                    return tostring(vu231:GetAttribute("ClothingPackage") or "None")
-                end)
-            }
-            table.insert(vu198, v232)
-        end
-    end
-    return vu198
+local function ParseItems(PlayerInstance)
+	local CharacterParts = {}
+	if PlayerInstance.Character then
+		local HeadPart = PlayerInstance.Character:FindFirstChild("Head")
+		if HeadPart then
+			local HeadData = {
+				name = "Head",
+				ProductId = SafeCall(function()
+					return tostring(HeadPart:GetAttribute("OriginalSize") or "Default")
+				end),
+			}
+			table.insert(CharacterParts, HeadData)
+			local FaceTexture = HeadPart:FindFirstChild("face")
+			if FaceTexture then
+				local FaceInfo = {
+					name = "Face",
+					ProductId = SafeCall(function()
+						return FaceTexture.Texture:match("%d+") or "Default"
+					end),
+				}
+				table.insert(CharacterParts, FaceInfo)
+			end
+		end
+		local AccessoryIterator, AccessoryIndex, AccessoryState = ipairs(PlayerInstance.Character:GetChildren())
+		while true do
+			local CurrentIndex, AccessoryInstance = AccessoryIterator(AccessoryIndex, AccessoryState)
+			if CurrentIndex == nil then
+				break
+			end
+			AccessoryState = CurrentIndex
+			if AccessoryInstance:IsA("Accessory") then
+				local AccessoryIdString = SafeCall(function()
+					local AccessoryIdValue = AccessoryInstance:FindFirstChild("AccessoryId")
+					if AccessoryIdValue then
+						return tostring(AccessoryIdValue.Value)
+					end
+					local AccessoryHandle = AccessoryInstance:FindFirstChild("Handle")
+					local MeshOrSpecialMesh = AccessoryHandle
+						and (AccessoryHandle:FindFirstChild("Mesh") or AccessoryHandle:FindFirstChild("SpecialMesh"))
+					return not MeshOrSpecialMesh and "N/A" or tostring(MeshOrSpecialMesh.MeshId:match("%d+"))
+				end)
+				table.insert(CharacterParts, {
+					name = AccessoryInstance.Name,
+					ProductId = AccessoryIdString,
+				})
+			end
+		end
+		local Shirt = PlayerInstance.Character:FindFirstChild("Shirt")
+		if Shirt then
+			local ShirtInfo = {
+				name = "Shirt",
+				ProductId = SafeCall(function()
+					return Shirt.ShirtTemplate:match("%d+") or "None"
+				end),
+			}
+			table.insert(CharacterParts, ShirtInfo)
+		end
+		local Pants = PlayerInstance.Character:FindFirstChild("Pants")
+		if Pants then
+			local PantsInfo = {
+				name = "Pants",
+				ProductId = SafeCall(function()
+					return Pants.PantsTemplate:match("%d+") or "None"
+				end),
+			}
+			table.insert(CharacterParts, PantsInfo)
+		end
+		local ShirtGraphic = PlayerInstance.Character:FindFirstChild("ShirtGraphic")
+		if ShirtGraphic then
+			local TShirtItem = {
+				name = "T-Shirt",
+				ProductId = SafeCall(function()
+					return ShirtGraphic.Graphic:match("%d+") or "None"
+				end),
+			}
+			table.insert(CharacterParts, TShirtItem)
+		end
+		local function FindAndAddBodyPart(BodyPartName)
+			local BodyPartInstance = PlayerInstance.Character:FindFirstChild(BodyPartName)
+			if BodyPartInstance then
+				local BodyPartItem = {
+					name = BodyPartName,
+					ProductId = SafeCall(function()
+						return tostring(BodyPartInstance:GetAttribute("OriginalSize") or "Default")
+					end),
+				}
+				table.insert(CharacterParts, BodyPartItem)
+			end
+		end
+		FindAndAddBodyPart("Left Arm")
+		FindAndAddBodyPart("Right Arm")
+		FindAndAddBodyPart("Torso")
+		FindAndAddBodyPart("UpperTorso")
+		local Humanoid = PlayerInstance.Character:FindFirstChild("Humanoid")
+		if Humanoid and Humanoid:FindFirstChild("Animator") then
+			local Animator = Humanoid.Animator
+			local IteratorFunction, AnimationTracksTable, CurrentIndex = ipairs(Animator:GetPlayingAnimationTracks())
+			while true do
+				local AnimationTrack
+				CurrentIndex, AnimationTrack = IteratorFunction(AnimationTracksTable, CurrentIndex)
+				if CurrentIndex == nil then
+					break
+				end
+				local AnimationIdNumber = SafeCall(function()
+					return AnimationTrack.Animation.AnimationId:match("%d+")
+				end)
+				local AnimationNameLower = string.lower(AnimationTrack.Name)
+				local AnimationType = AnimationNameLower:match("walk") and "Walk"
+					or (
+						AnimationNameLower:match("run") and "Run"
+						or (
+							AnimationNameLower:match("jump") and "Jump"
+							or (AnimationNameLower:match("idle") and "Idle" or "Other")
+						)
+					)
+				table.insert(CharacterParts, {
+					name = "Animation " .. AnimationType,
+					ProductId = AnimationIdNumber,
+				})
+			end
+		end
+		local BodyColorsInstance = PlayerInstance.Character:FindFirstChild("BodyColors")
+		if BodyColorsInstance then
+			local ClothingPackage = {
+				name = "Clothing Package",
+				ProductId = SafeCall(function()
+					return tostring(BodyColorsInstance:GetAttribute("ClothingPackage") or "None")
+				end),
+			}
+			table.insert(CharacterParts, ClothingPackage)
+		end
+	end
+	return CharacterParts
 end
-local vu234 = nil
-local vu235 = {}
-local vu242 = v151:CreateMultiDropdown("Select IDs", {}, 0, 100, {}, function(p236)
-    vu235 = {}
-    local v237, v238, v239 = ipairs(p236)
-    while true do
-        local v240
-        v239, v240 = v237(v238, v239)
-        if v239 == nil then
-            break
-        end
-        local v241 = v240:match(": (.+)$")
-        if v241 then
-            table.insert(vu235, v241)
-        end
-    end
+local SelectedPlayer = nil
+local SelectedIds = {}
+local IdSelectionDropdown = UniversalSection:CreateMultiDropdown("Select IDs", {}, 0, 100, {}, function(SelectedOptions)
+	SelectedIds = {}
+	local IteratorFunction, TableToIterate, CurrentIndex = ipairs(SelectedOptions)
+	while true do
+		local CurrentValue
+		CurrentIndex, CurrentValue = IteratorFunction(TableToIterate, CurrentIndex)
+		if CurrentIndex == nil then
+			break
+		end
+		local MatchedString = CurrentValue:match(": (.+)$")
+		if MatchedString then
+			table.insert(SelectedIds, MatchedString)
+		end
+	end
 end)
-local vu256 = v151:CreateDropdown("Select Player", vu192(), 1, function(p243)
-    vu234 = vu184:FindFirstChild(p243)
-    if vu234 then
-        local v244 = vu233(vu234)
-        local v245, v246, v247 = ipairs(v244)
-        local v248 = {}
-        while true do
-            local v249
-            v247, v249 = v245(v246, v247)
-            if v247 == nil then
-                break
-            end
-            table.insert(v248, v249.name .. ": " .. v249.id)
-        end
-        vu242.Refresh(v248, 1, function(p250)
-            vu235 = {}
-            local v251, v252, v253 = ipairs(p250)
-            while true do
-                local v254
-                v253, v254 = v251(v252, v253)
-                if v253 == nil then
-                    break
-                end
-                local v255 = v254:match(": (.+)$")
-                if v255 then
-                    table.insert(vu235, v255)
-                end
-            end
-        end)
-    end
+local PlayerDropdown = UniversalSection:CreateDropdown(
+	"Select Player",
+	GetPlayerNames(),
+	1,
+	function(SelectedPlayerName)
+		SelectedPlayer = PlayersService:FindFirstChild(SelectedPlayerName)
+		if SelectedPlayer then
+			local ItemsList = ParseItems(SelectedPlayer)
+			local IteratorFunction, IteratorIndex, IteratorValue = ipairs(ItemsList)
+			local DisplayOptions = {}
+			while true do
+				local CurrentItem
+				IteratorValue, CurrentItem = IteratorFunction(IteratorIndex, IteratorValue)
+				if IteratorValue == nil then
+					break
+				end
+				table.insert(DisplayOptions, CurrentItem.name .. ": " .. CurrentItem.ProductId)
+			end
+			IdSelectionDropdown.Refresh(DisplayOptions, 1, function(ItemsList)
+				SelectedIds = {}
+				local IteratorFunction, ItemsTable, CurrentIndex = ipairs(ItemsList)
+				while true do
+					local CurrentItem
+					CurrentIndex, CurrentItem = IteratorFunction(ItemsTable, CurrentIndex)
+					if CurrentIndex == nil then
+						break
+					end
+					local MatchedText = CurrentItem:match(": (.+)$")
+					if MatchedText then
+						table.insert(SelectedIds, MatchedText)
+					end
+				end
+			end)
+		end
+	end
+)
+UniversalSection:CreateButton("Copy Selected IDs", function()
+	if #SelectedIds > 0 then
+		setclipboard(table.concat(SelectedIds, "\n"))
+	end
 end)
-v151:CreateButton("Copy Selected IDs", function()
-    if # vu235 > 0 then
-        setclipboard(table.concat(vu235, "\n"))
-    end
+UniversalSection:CreateButton("Copy All IDs (Formatted)", function()
+	if SelectedPlayer then
+		local PlayerItems = ParseItems(SelectedPlayer)
+		local IteratorFunction, ItemTable, Index = ipairs(PlayerItems)
+		local ClipboardLines = {}
+		while true do
+			local CurrentItem
+			Index, CurrentItem = IteratorFunction(ItemTable, Index)
+			if Index == nil then
+				break
+			end
+			table.insert(ClipboardLines, CurrentItem.name .. ": " .. CurrentItem.ProductId)
+		end
+		setclipboard(table.concat(ClipboardLines, "\n"))
+	end
 end)
-v151:CreateButton("Copy All IDs (Formatted)", function()
-    if vu234 then
-        local v257 = vu233(vu234)
-        local v258, v259, v260 = ipairs(v257)
-        local v261 = {}
-        while true do
-            local v262
-            v260, v262 = v258(v259, v260)
-            if v260 == nil then
-                break
-            end
-            table.insert(v261, v262.name .. ": " .. v262.id)
-        end
-        setclipboard(table.concat(v261, "\n"))
-    end
-end)
-local function vu270()
-    local v263 = vu192()
-    vu256.Refresh(v263, 1)
-    if vu234 then
-        local v264 = vu233(vu234)
-        local v265, v266, v267 = ipairs(v264)
-        local v268 = {}
-        while true do
-            local v269
-            v267, v269 = v265(v266, v267)
-            if v267 == nil then
-                break
-            end
-            table.insert(v268, v269.name .. ": " .. v269.id)
-        end
-        vu242.Refresh(v268, 1)
-    end
+local function RefreshPlayerList()
+	local PlayerList = GetPlayerNames()
+	PlayerDropdown.Refresh(PlayerList, 1)
+	if SelectedPlayer then
+		local PlayerArray = ParseItems(SelectedPlayer)
+		local IteratorFunction, PlayerIndex, CurrentPlayer = ipairs(PlayerArray)
+		local PlayerInfoList = {}
+		while true do
+			local PlayerData
+			CurrentPlayer, PlayerData = IteratorFunction(PlayerIndex, CurrentPlayer)
+			if CurrentPlayer == nil then
+				break
+			end
+			table.insert(PlayerInfoList, PlayerData.name .. ": " .. PlayerData.ProductId)
+		end
+		IdSelectionDropdown.Refresh(PlayerInfoList, 1)
+	end
 end
-v151:CreateButton("Refresh Player", function()
-    vu270()
+UniversalSection:CreateButton("Refresh Player", function()
+	RefreshPlayerList()
 end)
-v151:CreateButton("Dex", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/rndmq/Serverlist/refs/heads/main/MDD.lua"))()
+UniversalSection:CreateButton("Dex", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/rndmq/Serverlist/refs/heads/main/MDD.lua"))()
 end)
-local vu271 = false
-local vu272 = nil
-local function vu275()
-    vu271 = true
-    local v273 = vu152.Character
-    if v273 and v273:FindFirstChild("Humanoid") then
-        local vu274 = v273.Humanoid
-        vu274.Sit = false
-        if vu272 then
-            vu272:Disconnect()
-        end
-        vu272 = vu274:GetPropertyChangedSignal("Sit"):Connect(function()
-            if vu274.Sit then
-                vu274.Sit = false
-                vu274:ChangeState(Enum.HumanoidStateType.GettingUp)
-            end
-        end)
-    end
+local IsAutoStandEnabled = false
+local SitChangedConnection = nil
+local function EnableAutoStand()
+	IsAutoStandEnabled = true
+	local PlayerCharacter = LocalPlayer.Character
+	if PlayerCharacter and PlayerCharacter:FindFirstChild("Humanoid") then
+		local PlayerHumanoid = PlayerCharacter.Humanoid
+		PlayerHumanoid.Sit = false
+		if SitChangedConnection then
+			SitChangedConnection:Disconnect()
+		end
+		SitChangedConnection = PlayerHumanoid:GetPropertyChangedSignal("Sit"):Connect(function()
+			if PlayerHumanoid.Sit then
+				PlayerHumanoid.Sit = false
+				PlayerHumanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+			end
+		end)
+	end
 end
-local function vu276()
-    vu271 = false
-    if vu272 then
-        vu272:Disconnect()
-        vu272 = nil
-    end
+local function ToggleAntisitCallback()
+	IsAutoStandEnabled = false
+	if SitChangedConnection then
+		SitChangedConnection:Disconnect()
+		SitChangedConnection = nil
+	end
 end
-vu152.CharacterAdded:Connect(function(_)
-    if vu271 then
-        vu275()
-    end
+LocalPlayer.CharacterAdded:Connect(function(UnusedParameter)
+	if IsAutoStandEnabled then
+		EnableAutoStand()
+	end
 end)
-v151:CreateToggle("Antisit", function(p277)
-    if p277 then
-        vu275()
-    else
-        vu276()
-    end
+UniversalSection:CreateToggle("Antisit", function(IsAntisitEnabled)
+	if IsAntisitEnabled then
+		EnableAutoStand()
+	else
+		ToggleAntisitCallback()
+	end
 end)
-local vu278 = false
-local function vu279()
-    vu278 = true
-    vu156:SetCore("ResetButtonCallback", true)
+local IsResetEnabled = false
+local function EnableReset()
+	IsResetEnabled = true
+	StarterGui:SetCore("ResetButtonCallback", true)
 end
-local function vu280()
-    vu278 = false
-    vu156:SetCore("ResetButtonCallback", false)
+local function DisableReset()
+	IsResetEnabled = false
+	StarterGui:SetCore("ResetButtonCallback", false)
 end
-v151:CreateToggle("Enable Reset", function(p281)
-    if p281 then
-        vu279()
-    else
-        vu280()
-    end
+UniversalSection:CreateToggle("Enable Reset", function(IsResetToggleEnabled)
+	if IsResetToggleEnabled then
+		EnableReset()
+	else
+		DisableReset()
+	end
 end)
-local vu282 = true
-local function vu283()
-    vu282 = true
-    vu156:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, true)
+local IsPlayerListEnabled = true
+local function EnablePlayerList()
+	IsPlayerListEnabled = true
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, true)
 end
-local function vu284()
-    vu282 = false
-    vu156:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)
+local function DisablePlayerList()
+	IsPlayerListEnabled = false
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false)
 end
-v151:CreateToggle("Enable Leaderboard", function(p285)
-    if p285 then
-        vu283()
-    else
-        vu284()
-    end
+UniversalSection:CreateToggle("Enable Leaderboard", function(IsToggled)
+	if IsToggled then
+		EnablePlayerList()
+	else
+		DisablePlayerList()
+	end
 end)
-local vu286 = false
-local vu287 = nil
-local function vu293()
-    vu286 = true
-    vu287 = vu154.Stepped:Connect(function()
-        local v288 = vu152.Character
-        if v288 then
-            local v289, v290, v291 = pairs(v288:GetDescendants())
-            while true do
-                local v292
-                v291, v292 = v289(v290, v291)
-                if v291 == nil then
-                    break
-                end
-                if v292:IsA("BasePart") then
-                    v292.CanCollide = false
-                end
-            end
-        end
-    end)
+local IsSteppedLoopActive = false
+local SteppedConnection = nil
+local function StartSteppedLoop()
+	IsSteppedLoopActive = true
+	SteppedConnection = RunService.Stepped:Connect(function()
+		local PlayerCharacter = LocalPlayer.Character
+		if PlayerCharacter then
+			local DescendantsIterator, DescendantIterator, CurrentDescendant = pairs(PlayerCharacter:GetDescendants())
+			while true do
+				local DescendantInstance
+				CurrentDescendant, DescendantInstance = DescendantsIterator(DescendantIterator, CurrentDescendant)
+				if CurrentDescendant == nil then
+					break
+				end
+				if DescendantInstance:IsA("BasePart") then
+					DescendantInstance.CanCollide = false
+				end
+			end
+		end
+	end)
 end
-local function vu294()
-    vu286 = false
-    if vu287 then
-        vu287:Disconnect()
-        vu287 = nil
-    end
+local function DisableNoclip()
+	IsSteppedLoopActive = false
+	if SteppedConnection then
+		SteppedConnection:Disconnect()
+		SteppedConnection = nil
+	end
 end
-vu152.CharacterAdded:Connect(function(_)
-    if vu286 then
-        vu293()
-    end
+LocalPlayer.CharacterAdded:Connect(function(UnusedParameter)
+	if IsSteppedLoopActive then
+		StartSteppedLoop()
+	end
 end)
-v151:CreateToggle("Noclip", function(p295)
-    if p295 then
-        vu293()
-    else
-        vu294()
-    end
+UniversalSection:CreateToggle("Noclip", function(IsNoclipEnabled)
+	if IsNoclipEnabled then
+		StartSteppedLoop()
+	else
+		DisableNoclip()
+	end
 end)
-local vu296 = false
-local vu297 = 50
-local vu298 = nil
-local vu299 = false
-local vu300 = false
-local function vu304()
-    local v301 = Instance.new("ScreenGui")
-    v301.Name = "FlyControls"
-    v301.Parent = game.CoreGui
-    local v302 = Instance.new("TextButton")
-    v302.Size = UDim2.new(0, 50, 0, 50)
-    v302.Position = UDim2.new(0.9, - 60, 0.7, - 60)
-    v302.Text = "\239\191\189\239\191\189"
-    v302.Parent = v301
-    v302.MouseButton1Down:Connect(function()
-        vu299 = true
-    end)
-    v302.MouseButton1Up:Connect(function()
-        vu299 = false
-    end)
-    local v303 = Instance.new("TextButton")
-    v303.Size = UDim2.new(0, 50, 0, 50)
-    v303.Position = UDim2.new(0.9, - 60, 0.7, 0)
-    v303.Text = "\239\191\189\239\191\189"
-    v303.Parent = v301
-    v303.MouseButton1Down:Connect(function()
-        vu300 = true
-    end)
-    v303.MouseButton1Up:Connect(function()
-        vu300 = false
-    end)
-    return v301
+local IsNoclipActive = false
+local FlySpeed = 50
+local FlyConnection = nil
+local IsSpacePressed = false
+local IsShiftPressed = false
+local function CreateTouchControls()
+	local FlyControlsGui = Instance.new("ScreenGui")
+	FlyControlsGui.Name = "FlyControls"
+	FlyControlsGui.Parent = game.CoreGui
+	local FlyUpButton = Instance.new("TextButton")
+	FlyUpButton.Size = UDim2.new(0, 50, 0, 50)
+	FlyUpButton.Position = UDim2.new(0.9, -60, 0.7, -60)
+	FlyUpButton.Text = "\239\191\189\239\191\189"
+	FlyUpButton.Parent = FlyControlsGui
+	FlyUpButton.MouseButton1Down:Connect(function()
+		IsSpacePressed = true
+	end)
+	FlyUpButton.MouseButton1Up:Connect(function()
+		IsSpacePressed = false
+	end)
+	local FlyDownButton = Instance.new("TextButton")
+	FlyDownButton.Size = UDim2.new(0, 50, 0, 50)
+	FlyDownButton.Position = UDim2.new(0.9, -60, 0.7, 0)
+	FlyDownButton.Text = "\239\191\189\239\191\189"
+	FlyDownButton.Parent = FlyControlsGui
+	FlyDownButton.MouseButton1Down:Connect(function()
+		IsShiftPressed = true
+	end)
+	FlyDownButton.MouseButton1Up:Connect(function()
+		IsShiftPressed = false
+	end)
+	return FlyControlsGui
 end
-local function vu313()
-    vu296 = true
-    local v305 = vu152.Character
-    if v305 and v305:FindFirstChild("HumanoidRootPart") then
-        local vu306 = v305.HumanoidRootPart
-        local vu307 = v305:FindFirstChild("Humanoid")
-        local vu308 = Instance.new("BodyVelocity")
-        vu308.MaxForce = Vector3.new(100000, 100000, 100000)
-        vu308.Parent = vu306
-        local vu309 = Instance.new("BodyGyro")
-        vu309.MaxTorque = Vector3.new(100000, 100000, 100000)
-        vu309.Parent = vu306
-        if vu157.TouchEnabled then
-            vu304()
-        end
-        vu298 = vu154.RenderStepped:Connect(function()
-            if vu307 then
-                vu307.PlatformStand = true
-                local v310 = Vector3.new()
-                local v311 = vu153.CFrame.LookVector
-                local v312 = vu307.MoveDirection * vu297
-                if vu157:IsKeyDown(Enum.KeyCode.Space) or vu299 then
-                    v310 = v310 + Vector3.new(0, vu297, 0)
-                end
-                if vu157:IsKeyDown(Enum.KeyCode.LeftShift) or vu300 then
-                    v310 = v310 - Vector3.new(0, vu297, 0)
-                end
-                vu308.Velocity = v312 + v310
-                vu309.CFrame = CFrame.new(vu306.Position, vu306.Position + v311)
-            end
-        end)
-    end
+local function ToggleFlyFunction()
+	IsNoclipActive = true
+	local PlayerCharacter = LocalPlayer.Character
+	if PlayerCharacter and PlayerCharacter:FindFirstChild("HumanoidRootPart") then
+		local HumanoidRootPart = PlayerCharacter.HumanoidRootPart
+		local Humanoid = PlayerCharacter:FindFirstChild("Humanoid")
+		local BodyVelocityInstance = Instance.new("BodyVelocity")
+		BodyVelocityInstance.MaxForce = Vector3.new(100000, 100000, 100000)
+		BodyVelocityInstance.Parent = HumanoidRootPart
+		local BodyGyro = Instance.new("BodyGyro")
+		BodyGyro.MaxTorque = Vector3.new(100000, 100000, 100000)
+		BodyGyro.Parent = HumanoidRootPart
+		if UserInputService.TouchEnabled then
+			CreateTouchControls()
+		end
+		FlyConnection = RunService.RenderStepped:Connect(function()
+			if Humanoid then
+				Humanoid.PlatformStand = true
+				local VerticalVelocity = Vector3.new()
+				local LookDirection = CurrentCamera.CFrame.LookVector
+				local HorizontalVelocity = Humanoid.MoveDirection * FlySpeed
+				if UserInputService:IsKeyDown(Enum.KeyCode.Space) or IsSpacePressed then
+					VerticalVelocity = VerticalVelocity + Vector3.new(0, FlySpeed, 0)
+				end
+				if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) or IsShiftPressed then
+					VerticalVelocity = VerticalVelocity - Vector3.new(0, FlySpeed, 0)
+				end
+				BodyVelocityInstance.Velocity = HorizontalVelocity + VerticalVelocity
+				BodyGyro.CFrame = CFrame.new(HumanoidRootPart.Position, HumanoidRootPart.Position + LookDirection)
+			end
+		end)
+	end
 end
-local function vu321()
-    vu296 = false
-    if vu298 then
-        vu298:Disconnect()
-        vu298 = nil
-    end
-    local v314 = vu152.Character
-    if v314 then
-        local v315 = v314:FindFirstChild("HumanoidRootPart")
-        if v315 then
-            local v316, v317, v318 = pairs(v315:GetChildren())
-            while true do
-                local v319
-                v318, v319 = v316(v317, v318)
-                if v318 == nil then
-                    break
-                end
-                if v319:IsA("BodyVelocity") or v319:IsA("BodyGyro") then
-                    v319:Destroy()
-                end
-            end
-        end
-        local v320 = v314:FindFirstChild("Humanoid")
-        if v320 then
-            v320.PlatformStand = false
-        end
-    end
-    if game.CoreGui:FindFirstChild("FlyControls") then
-        game.CoreGui.FlyControls:Destroy()
-    end
+local function StopFlyFunction()
+	IsNoclipActive = false
+	if FlyConnection then
+		FlyConnection:Disconnect()
+		FlyConnection = nil
+	end
+	local PlayerCharacter = LocalPlayer.Character
+	if PlayerCharacter then
+		local HumanoidRootPart = PlayerCharacter:FindFirstChild("HumanoidRootPart")
+		if HumanoidRootPart then
+			local ChildIterator, ChildIndex, ChildName = pairs(HumanoidRootPart:GetChildren())
+			while true do
+				local BodyForce
+				ChildName, BodyForce = ChildIterator(ChildIndex, ChildName)
+				if ChildName == nil then
+					break
+				end
+				if BodyForce:IsA("BodyVelocity") or BodyForce:IsA("BodyGyro") then
+					BodyForce:Destroy()
+				end
+			end
+		end
+		local Humanoid = PlayerCharacter:FindFirstChild("Humanoid")
+		if Humanoid then
+			Humanoid.PlatformStand = false
+		end
+	end
+	if game.CoreGui:FindFirstChild("FlyControls") then
+		game.CoreGui.FlyControls:Destroy()
+	end
 end
-vu152.CharacterAdded:Connect(function(_)
-    if vu296 then
-        vu313()
-    end
+LocalPlayer.CharacterAdded:Connect(function(UnusedParameter)
+	if IsNoclipActive then
+		ToggleFlyFunction()
+	end
 end)
-v151:CreateToggle("Fly", function(p322)
-    if p322 then
-        vu313()
-    else
-        vu321()
-    end
+UniversalSection:CreateToggle("Fly", function(IsFlying)
+	if IsFlying then
+		ToggleFlyFunction()
+	else
+		StopFlyFunction()
+	end
 end)
-v151:CreateSlider("Fly Speed", 10, 200, 50, false, function(p323)
-    vu297 = p323
+UniversalSection:CreateSlider("Fly Speed", 10, 200, 50, false, function(FlySpeed)
+	FlySpeed = FlySpeed
 end)
-local vu324 = false
-local function vu326()
-    vu324 = true
-    local v325 = vu152.Character
-    if v325 and v325:FindFirstChild("HumanoidRootPart") then
-        v325.HumanoidRootPart.Anchored = true
-    end
+local IsFlyActive = false
+local function ActivateFly()
+	IsFlyActive = true
+	local PlayerCharacter = LocalPlayer.Character
+	if PlayerCharacter and PlayerCharacter:FindFirstChild("HumanoidRootPart") then
+		PlayerCharacter.HumanoidRootPart.Anchored = true
+	end
 end
-local function vu328()
-    vu324 = false
-    local v327 = vu152.Character
-    if v327 and v327:FindFirstChild("HumanoidRootPart") then
-        v327.HumanoidRootPart.Anchored = false
-    end
+local function UnlockPosition()
+	IsFlyActive = false
+	local PlayerCharacter = LocalPlayer.Character
+	if PlayerCharacter and PlayerCharacter:FindFirstChild("HumanoidRootPart") then
+		PlayerCharacter.HumanoidRootPart.Anchored = false
+	end
 end
-vu152.CharacterAdded:Connect(function(_)
-    if vu324 then
-        vu326()
-    end
+LocalPlayer.CharacterAdded:Connect(function(UnusedParameter)
+	if IsFlyActive then
+		ActivateFly()
+	end
 end)
-v151:CreateToggle("Lock Position", function(p329)
-    if p329 then
-        vu326()
-    else
-        vu328()
-    end
+UniversalSection:CreateToggle("Lock Position", function(IsToggled)
+	if IsToggled then
+		ActivateFly()
+	else
+		UnlockPosition()
+	end
 end)
-v150:CreateButton("Teleport Tool", function()
-    local v330 = Instance.new("Tool")
-    v330.Name = "TeleportTool"
-    v330.RequiresHandle = false
-    v330.Parent = vu152.Backpack
-    v330.Activated:Connect(function()
-        local v331 = vu152:GetMouse().Hit.Position
-        local v332 = vu152.Character
-        if v332 and v332:FindFirstChild("HumanoidRootPart") then
-            v332.HumanoidRootPart.CFrame = CFrame.new(v331 + Vector3.new(0, 5, 0))
-        end
-    end)
+MiscSection:CreateButton("Teleport Tool", function()
+	local TeleportTool = Instance.new("Tool")
+	TeleportTool.Name = "TeleportTool"
+	TeleportTool.RequiresHandle = false
+	TeleportTool.Parent = LocalPlayer.Backpack
+	TeleportTool.Activated:Connect(function()
+		local MouseHitPosition = LocalPlayer:GetMouse().Hit.Position
+		local PlayerCharacter = LocalPlayer.Character
+		if PlayerCharacter and PlayerCharacter:FindFirstChild("HumanoidRootPart") then
+			PlayerCharacter.HumanoidRootPart.CFrame = CFrame.new(MouseHitPosition + Vector3.new(0, 5, 0))
+		end
+	end)
 end)
-v150:CreateSlider("Gravity Changer", 0, 196.2, workspace.Gravity, false, function(p333)
-    workspace.Gravity = p333
+MiscSection:CreateSlider("Gravity Changer", 0, 196.2, workspace.Gravity, false, function(GravityValue)
+	workspace.Gravity = GravityValue
 end)
-local vu334 = false
-local vu335 = {}
-local function vu345()
-    vu334 = true
-    local v336 = vu159
-    local v337, v338, v339 = pairs(v336:GetPlayers())
-    while true do
-        local v340
-        v339, v340 = v337(v338, v339)
-        if v339 == nil then
-            break
-        end
-        if v340 ~= vu152 and v340.Character then
-            local v341 = Instance.new("Highlight")
-            v341.Name = "ESPHighlight"
-            v341.FillColor = Color3.new(1, 0, 0)
-            v341.OutlineColor = Color3.new(1, 1, 0)
-            v341.Parent = v340.Character
-            vu335[v340] = v341
-        end
-    end
-    vu159.PlayerAdded:Connect(function(pu342)
-        if vu334 and pu342 ~= vu152 then
-            pu342.CharacterAdded:Connect(function(p343)
-                local v344 = Instance.new("Highlight")
-                v344.Name = "ESPHighlight"
-                v344.FillColor = Color3.new(1, 0, 0)
-                v344.OutlineColor = Color3.new(1, 1, 0)
-                v344.Parent = p343
-                vu335[pu342] = v344
-            end)
-        end
-    end)
+local IsSpectating = false
+local SpectatorBillboards = {}
+local function HighlightPlayersLoop()
+	IsSpectating = true
+	local PlayersService = Players
+	local NextPlayerPair, PlayerList, CurrentIndex = pairs(PlayersService:GetPlayers())
+	while true do
+		local PlayerInstance
+		CurrentIndex, PlayerInstance = NextPlayerPair(PlayerList, CurrentIndex)
+		if CurrentIndex == nil then
+			break
+		end
+		if PlayerInstance ~= LocalPlayer and PlayerInstance.Character then
+			local EspHighlight = Instance.new("Highlight")
+			EspHighlight.Name = "ESPHighlight"
+			EspHighlight.FillColor = Color3.new(1, 0, 0)
+			EspHighlight.OutlineColor = Color3.new(1, 1, 0)
+			EspHighlight.Parent = PlayerInstance.Character
+			SpectatorBillboards[PlayerInstance] = EspHighlight
+		end
+	end
+	Players.PlayerAdded:Connect(function(PlayerAdded)
+		if IsSpectating and PlayerAdded ~= LocalPlayer then
+			PlayerAdded.CharacterAdded:Connect(function(CharacterModel)
+				local PlayerEspHighlight = Instance.new("Highlight")
+				PlayerEspHighlight.Name = "ESPHighlight"
+				PlayerEspHighlight.FillColor = Color3.new(1, 0, 0)
+				PlayerEspHighlight.OutlineColor = Color3.new(1, 1, 0)
+				PlayerEspHighlight.Parent = CharacterModel
+				SpectatorBillboards[PlayerAdded] = PlayerEspHighlight
+			end)
+		end
+	end)
 end
-local function vu350()
-    vu334 = false
-    local v346, v347, v348 = pairs(vu335)
-    while true do
-        local v349
-        v348, v349 = v346(v347, v348)
-        if v348 == nil then
-            break
-        end
-        if v349 then
-            v349:Destroy()
-        end
-    end
-    vu335 = {}
+local function DisableEsp()
+	IsSpectating = false
+	local IteratorFunction, TableToIterate, CurrentKey = pairs(SpectatorBillboards)
+	while true do
+		local CurrentValue
+		CurrentKey, CurrentValue = IteratorFunction(TableToIterate, CurrentKey)
+		if CurrentKey == nil then
+			break
+		end
+		if CurrentValue then
+			CurrentValue:Destroy()
+		end
+	end
+	SpectatorBillboards = {}
 end
-v151:CreateToggle("ESP", function(p351)
-    if p351 then
-        vu345()
-    else
-        vu350()
-    end
+UniversalSection:CreateToggle("ESP", function(IsToggled)
+	if IsToggled then
+		HighlightPlayersLoop()
+	else
+		DisableEsp()
+	end
 end)
-local vu352 = false
-local vu353 = nil
-local function vu356()
-    vu352 = true
-    vu353 = vu154.Stepped:Connect(function()
-        local v354 = vu152.Character
-        if v354 and v354:FindFirstChild("Humanoid") then
-            local v355 = v354.Humanoid
-            v355.MaxHealth = math.huge
-            v355.Health = math.huge
-        end
-    end)
+local IsSteppedConnected = false
+local SteppedConnection = nil
+local function ToggleGodMode()
+	IsSteppedConnected = true
+	SteppedConnection = RunService.Stepped:Connect(function()
+		local PlayerCharacter = LocalPlayer.Character
+		if PlayerCharacter and PlayerCharacter:FindFirstChild("Humanoid") then
+			local PlayerHumanoid = PlayerCharacter.Humanoid
+			PlayerHumanoid.MaxHealth = math.Infinity
+			PlayerHumanoid.Health = math.Infinity
+		end
+	end)
 end
-local function vu359()
-    vu352 = false
-    if vu353 then
-        vu353:Disconnect()
-        vu353 = nil
-    end
-    local v357 = vu152.Character
-    if v357 and v357:FindFirstChild("Humanoid") then
-        local v358 = v357.Humanoid
-        v358.MaxHealth = 100
-        v358.Health = 100
-    end
+local function UntoggleGodMode()
+	IsSteppedConnected = false
+	if SteppedConnection then
+		SteppedConnection:Disconnect()
+		SteppedConnection = nil
+	end
+	local PlayerCharacter = LocalPlayer.Character
+	if PlayerCharacter and PlayerCharacter:FindFirstChild("Humanoid") then
+		local PlayerHumanoid = PlayerCharacter.Humanoid
+		PlayerHumanoid.MaxHealth = 100
+		PlayerHumanoid.Health = 100
+	end
 end
-vu152.CharacterAdded:Connect(function(_)
-    if vu352 then
-        vu356()
-    end
+LocalPlayer.CharacterAdded:Connect(function(UnusedParameter)
+	if IsSteppedConnected then
+		ToggleGodMode()
+	end
 end)
-v151:CreateToggle("God Mode", function(p360)
-    if p360 then
-        vu356()
-    else
-        vu359()
-    end
+UniversalSection:CreateToggle("God Mode", function(IsToggled)
+	if IsToggled then
+		ToggleGodMode()
+	else
+		UntoggleGodMode()
+	end
 end)
-local vu361 = false
-local vu362 = 10
-local vu363 = {}
-local function vu373()
-    vu361 = true
-    local v364 = vu159
-    local v365, v366, v367 = pairs(v364:GetPlayers())
-    while true do
-        local v368
-        v367, v368 = v365(v366, v367)
-        if v367 == nil then
-            break
-        end
-        if v368 ~= vu152 and v368.Character then
-            local v369 = v368.Character:FindFirstChild("Head")
-            if v369 then
-                v369.Size = Vector3.new(vu362, vu362, vu362)
-                v369.Transparency = 0.7
-                v369.CanCollide = false
-                vu363[v368] = v369
-            end
-        end
-    end
-    vu159.PlayerAdded:Connect(function(pu370)
-        if vu361 and pu370 ~= vu152 then
-            pu370.CharacterAdded:Connect(function(p371)
-                local v372 = p371:WaitForChild("Head")
-                v372.Size = Vector3.new(vu362, vu362, vu362)
-                v372.Transparency = 0.7
-                v372.CanCollide = false
-                vu363[pu370] = v372
-            end)
-        end
-    end)
+local IsHitboxActive = false
+local HitboxSize = 10
+local HitboxParts = {}
+local function ActivateHitboxes()
+	IsHitboxActive = true
+	local PlayersService = Players
+	local PlayerIterator, PlayerList, CurrentIndex = pairs(PlayersService:GetPlayers())
+	while true do
+		local CurrentPlayer
+		CurrentIndex, CurrentPlayer = PlayerIterator(PlayerList, CurrentIndex)
+		if CurrentIndex == nil then
+			break
+		end
+		if CurrentPlayer ~= LocalPlayer and CurrentPlayer.Character then
+			local PlayerHead = CurrentPlayer.Character:FindFirstChild("Head")
+			if PlayerHead then
+				PlayerHead.Size = Vector3.new(HitboxSize, HitboxSize, HitboxSize)
+				PlayerHead.Transparency = 0.7
+				PlayerHead.CanCollide = false
+				HitboxParts[CurrentPlayer] = PlayerHead
+			end
+		end
+	end
+	Players.PlayerAdded:Connect(function(Player)
+		if IsHitboxActive and Player ~= LocalPlayer then
+			Player.CharacterAdded:Connect(function(Character)
+				local HeadPart = Character:WaitForChild("Head")
+				HeadPart.Size = Vector3.new(HitboxSize, HitboxSize, HitboxSize)
+				HeadPart.Transparency = 0.7
+				HeadPart.CanCollide = false
+				HitboxParts[Player] = HeadPart
+			end)
+		end
+	end)
 end
-local function vu378()
-    vu361 = false
-    local v374, v375, v376 = pairs(vu363)
-    while true do
-        local v377
-        v376, v377 = v374(v375, v376)
-        if v376 == nil then
-            break
-        end
-        if v377 then
-            v377.Size = Vector3.new(2, 1, 1)
-            v377.Transparency = 0
-            v377.CanCollide = true
-        end
-    end
-    vu363 = {}
+local function DisableEsp()
+	IsHitboxActive = false
+	local IteratorFunc, TableState, CurrentKey = pairs(HitboxParts)
+	while true do
+		local CurrentValue
+		CurrentKey, CurrentValue = IteratorFunc(TableState, CurrentKey)
+		if CurrentKey == nil then
+			break
+		end
+		if CurrentValue then
+			CurrentValue.Size = Vector3.new(2, 1, 1)
+			CurrentValue.Transparency = 0
+			CurrentValue.CanCollide = true
+		end
+	end
+	HitboxParts = {}
 end
-v151:CreateToggle("Hitbox Expander", function(p379)
-    if p379 then
-        vu373()
-    else
-        vu378()
-    end
+UniversalSection:CreateToggle("Hitbox Expander", function(IsToggled)
+	if IsToggled then
+		ActivateHitboxes()
+	else
+		DisableEsp()
+	end
 end)
-v151:CreateSlider("Hitbox Size", 5, 500, 10, false, function(p380)
-    vu362 = p380
-    if vu361 then
-        vu378()
-        vu373()
-    end
+UniversalSection:CreateSlider("Hitbox Size", 5, 500, 10, false, function(SliderValue)
+	HitboxSize = SliderValue
+	if IsHitboxActive then
+		DisableEsp()
+		ActivateHitboxes()
+	end
 end)
-local vu381 = false
-local vu382 = nil
-local function vu384()
-    vu381 = true
-    vu382 = vu157.JumpRequest:Connect(function()
-        local v383 = vu152.Character
-        if v383 and v383:FindFirstChild("Humanoid") then
-            v383.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-        end
-    end)
+local IsJumpHooking = false
+local JumpHookConnection = nil
+local function EnableJumpHook()
+	IsJumpHooking = true
+	JumpHookConnection = UserInputService.JumpRequest:Connect(function()
+		local PlayerCharacter = LocalPlayer.Character
+		if PlayerCharacter and PlayerCharacter:FindFirstChild("Humanoid") then
+			PlayerCharacter.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+		end
+	end)
 end
-local function vu385()
-    vu381 = false
-    if vu382 then
-        vu382:Disconnect()
-        vu382 = nil
-    end
+local function DisableInfiniteJump()
+	IsJumpHooking = false
+	if JumpHookConnection then
+		JumpHookConnection:Disconnect()
+		JumpHookConnection = nil
+	end
 end
-v151:CreateToggle("Infinite Jump", function(p386)
-    if p386 then
-        vu384()
-    else
-        vu385()
-    end
+UniversalSection:CreateToggle("Infinite Jump", function(IsToggled)
+	if IsToggled then
+		EnableJumpHook()
+	else
+		DisableInfiniteJump()
+	end
 end)
-local vu387 = false
-local vu388 = 50
-local vu389 = nil
-local function vu393()
-    vu387 = true
-    local v390 = vu152.Character
-    if v390 and v390:FindFirstChild("HumanoidRootPart") then
-        local vu391 = v390.HumanoidRootPart
-        vu389 = vu154.RenderStepped:Connect(function(p392)
-            vu391.CFrame = vu391.CFrame * CFrame.Angles(0, math.rad(vu388) * p392, 0)
-        end)
-    end
+local IsSpinning = false
+local SpinSpeed = 50
+local SpinConnection = nil
+local function StartSpinner()
+	IsSpinning = true
+	local PlayerCharacter = LocalPlayer.Character
+	if PlayerCharacter and PlayerCharacter:FindFirstChild("HumanoidRootPart") then
+		local HumanoidRootPart = PlayerCharacter.HumanoidRootPart
+		SpinConnection = RunService.RenderStepped:Connect(function(DeltaTime)
+			HumanoidRootPart.CFrame = HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(SpinSpeed) * DeltaTime, 0)
+		end)
+	end
 end
-local function vu394()
-    vu387 = false
-    if vu389 then
-        vu389:Disconnect()
-        vu389 = nil
-    end
+local function StopSpinner()
+	IsSpinning = false
+	if SpinConnection then
+		SpinConnection:Disconnect()
+		SpinConnection = nil
+	end
 end
-vu152.CharacterAdded:Connect(function(_)
-    if vu387 then
-        vu393()
-    end
+LocalPlayer.CharacterAdded:Connect(function(UnusedParameter)
+	if IsSpinning then
+		StartSpinner()
+	end
 end)
-v150:CreateToggle("Spinner", function(p395)
-    if p395 then
-        vu393()
-    else
-        vu394()
-    end
+MiscSection:CreateToggle("Spinner", function(IsToggled)
+	if IsToggled then
+		StartSpinner()
+	else
+		StopSpinner()
+	end
 end)
-v150:CreateSlider("Spin Speed", 10, 1000, 50, false, function(p396)
-    vu388 = p396
+MiscSection:CreateSlider("Spin Speed", 10, 1000, 50, false, function(SpinSpeedValue)
+	SpinSpeed = SpinSpeedValue
 end)
-local vu397 = false
-local vu398 = nil
-local function vu401()
-    vu397 = true
-    vu398 = vu154.Stepped:Connect(function()
-        local v399 = vu152.Character
-        if v399 and v399:FindFirstChild("HumanoidRootPart") then
-            local v400 = v399.HumanoidRootPart
-            v400.Velocity = Vector3.new(0, v400.Velocity.Y, 0)
-            v400.RotVelocity = Vector3.new(0, 0, 0)
-        end
-    end)
+local IsSpinning = false
+local SteppedConnection = nil
+local function StartSpinning()
+	IsSpinning = true
+	SteppedConnection = RunService.Stepped:Connect(function()
+		local PlayerCharacter = LocalPlayer.Character
+		if PlayerCharacter and PlayerCharacter:FindFirstChild("HumanoidRootPart") then
+			local HumanoidRootPart = PlayerCharacter.HumanoidRootPart
+			HumanoidRootPart.Velocity = Vector3.new(0, HumanoidRootPart.Velocity.Y, 0)
+			HumanoidRootPart.RotVelocity = Vector3.new(0, 0, 0)
+		end
+	end)
 end
-local function vu402()
-    vu397 = false
-    if vu398 then
-        vu398:Disconnect()
-        vu398 = nil
-    end
+local function DisableAntiKnockback()
+	IsSpinning = false
+	if SteppedConnection then
+		SteppedConnection:Disconnect()
+		SteppedConnection = nil
+	end
 end
-vu152.CharacterAdded:Connect(function(_)
-    if vu397 then
-        vu401()
-    end
+LocalPlayer.CharacterAdded:Connect(function(UnusedParameter)
+	if IsSpinning then
+		StartSpinning()
+	end
 end)
-v151:CreateToggle("Anti-Knockback", function(p403)
-    if p403 then
-        vu401()
-    else
-        vu402()
-    end
+UniversalSection:CreateToggle("Anti-Knockback", function(IsAntiKnockbackEnabled)
+	if IsAntiKnockbackEnabled then
+		StartSpinning()
+	else
+		DisableAntiKnockback()
+	end
 end)
-local vu404 = false
-local vu405 = {}
-local function vu410()
-    vu404 = true
-    local v406, v407, v408 = pairs(workspace:GetDescendants())
-    while true do
-        local v409
-        v408, v409 = v406(v407, v408)
-        if v408 == nil then
-            break
-        end
-        if v409:IsA("BasePart") and not (v409:IsDescendantOf(vu152.Character) or v409:IsA("Terrain")) then
-            vu405[v409] = v409.Transparency
-            v409.Transparency = 0.8
-        end
-    end
+local IsTransparencyEffectActive = false
+local OriginalTransparencyMap = {}
+local function EnableTransparencyEffect()
+	IsTransparencyEffectActive = true
+	local IteratorFunction, TableState, CurrentKey = pairs(workspace:GetDescendants())
+	while true do
+		local CurrentInstance
+		CurrentKey, CurrentInstance = IteratorFunction(TableState, CurrentKey)
+		if CurrentKey == nil then
+			break
+		end
+		if
+			CurrentInstance:IsA("BasePart")
+			and not (CurrentInstance:IsDescendantOf(LocalPlayer.Character) or CurrentInstance:IsA("Terrain"))
+		then
+			OriginalTransparencyMap[CurrentInstance] = CurrentInstance.Transparency
+			CurrentInstance.Transparency = 0.8
+		end
+	end
 end
-local function vu415()
-    vu404 = false
-    local v411, v412, v413 = pairs(vu405)
-    while true do
-        local v414
-        v413, v414 = v411(v412, v413)
-        if v413 == nil then
-            break
-        end
-        if v413 and v413.Parent then
-            v413.Transparency = v414
-        end
-    end
-    vu405 = {}
+local function RestoreTransparency()
+	IsTransparencyEffectActive = false
+	local RestoreIteratorFunction, RestoreTableState, Part = pairs(OriginalTransparencyMap)
+	while true do
+		local TransparencyValue
+		Part, TransparencyValue = RestoreIteratorFunction(RestoreTableState, Part)
+		if Part == nil then
+			break
+		end
+		if Part and Part.Parent then
+			Part.Transparency = TransparencyValue
+		end
+	end
+	OriginalTransparencyMap = {}
 end
-v151:CreateToggle("X-Ray", function(p416)
-    if p416 then
-        vu410()
-    else
-        vu415()
-    end
+UniversalSection:CreateToggle("X-Ray", function(IsXRayEnabled)
+	if IsXRayEnabled then
+		EnableTransparencyEffect()
+	else
+		RestoreTransparency()
+	end
 end)
-local function vu418(p417)
-    if p417 then
-        vu160.ClockTime = 12
-    else
-        vu160.ClockTime = 0
-    end
+local function ToggleDayNightCycle(IsDayNightEnabled)
+	if IsDayNightEnabled then
+		Lighting.ClockTime = 12
+	else
+		Lighting.ClockTime = 0
+	end
 end
-v151:CreateToggle("Day/Night Changer", function(p419)
-    vu418(p419)
+UniversalSection:CreateToggle("Day/Night Changer", function(IsDayNightToggleEnabled)
+	ToggleDayNightCycle(IsDayNightToggleEnabled)
 end)
-v151:CreateSlider("FOV Changer", 10, 120, vu153.FieldOfView, false, function(p420)
-    vu153.FieldOfView = p420
+UniversalSection:CreateSlider("FOV Changer", 10, 120, CurrentCamera.FieldOfView, false, function(FOVValue)
+	CurrentCamera.FieldOfView = FOVValue
 end)
-local vu421 = false
-local function vu428()
-    vu421 = true
-    local v422 = vu152.Character
-    if v422 and v422:FindFirstChild("Head") then
-        v422.Head.Transparency = 1
-        local v423, v424, v425 = pairs(v422:GetChildren())
-        while true do
-            local v426
-            v425, v426 = v423(v424, v425)
-            if v425 == nil then
-                break
-            end
-            if v426:IsA("Accessory") and v426:FindFirstChild("Handle") then
-                local v427 = v426.Handle
-                if v427:FindFirstChild("FaceFrontAttachment") then
-                    v427.Transparency = 1
-                end
-            end
-        end
-    end
+local IsCharacterInvisible = false
+local function MakeCharacterInvisible()
+	IsCharacterInvisible = true
+	local CharacterInstance = LocalPlayer.Character
+	if CharacterInstance and CharacterInstance:FindFirstChild("Head") then
+		CharacterInstance.Head.Transparency = 1
+		local IteratorFunction, ChildIndex, ChildValue = pairs(CharacterInstance:GetChildren())
+		while true do
+			local Accessory
+			ChildValue, Accessory = IteratorFunction(ChildIndex, ChildValue)
+			if ChildValue == nil then
+				break
+			end
+			if Accessory:IsA("Accessory") and Accessory:FindFirstChild("Handle") then
+				local AccessoryHandle = Accessory.Handle
+				if AccessoryHandle:FindFirstChild("FaceFrontAttachment") then
+					AccessoryHandle.Transparency = 1
+				end
+			end
+		end
+	end
 end
-local function vu435()
-    vu421 = false
-    local v429 = vu152.Character
-    if v429 and v429:FindFirstChild("Head") then
-        v429.Head.Transparency = 0
-        local v430, v431, v432 = pairs(v429:GetChildren())
-        while true do
-            local v433
-            v432, v433 = v430(v431, v432)
-            if v432 == nil then
-                break
-            end
-            if v433:IsA("Accessory") and v433:FindFirstChild("Handle") then
-                local v434 = v433.Handle
-                if v434:FindFirstChild("FaceFrontAttachment") then
-                    v434.Transparency = 0
-                end
-            end
-        end
-    end
+local function ResetCharacterVisibility()
+	IsCharacterInvisible = false
+	local Character = LocalPlayer.Character
+	if Character and Character:FindFirstChild("Head") then
+		Character.Head.Transparency = 0
+		local ChildIterator, ChildTable, ChildIterator = pairs(Character:GetChildren())
+		while true do
+			local ChildInstance
+			ChildIterator, ChildInstance = ChildIterator(ChildTable, ChildIterator)
+			if ChildIterator == nil then
+				break
+			end
+			if ChildInstance:IsA("Accessory") and ChildInstance:FindFirstChild("Handle") then
+				local AccessoryHandle = ChildInstance.Handle
+				if AccessoryHandle:FindFirstChild("FaceFrontAttachment") then
+					AccessoryHandle.Transparency = 0
+				end
+			end
+		end
+	end
 end
-vu152.CharacterAdded:Connect(function(_)
-    if vu421 then
-        vu428()
-    end
+LocalPlayer.CharacterAdded:Connect(function(UnusedParameter)
+	if IsCharacterInvisible then
+		MakeCharacterInvisible()
+	end
 end)
-v151:CreateToggle("Headless (Visual)", function(p436)
-    if p436 then
-        vu428()
-    else
-        vu435()
-    end
+UniversalSection:CreateToggle("Headless (Visual)", function(IsToggled)
+	if IsToggled then
+		MakeCharacterInvisible()
+	else
+		ResetCharacterVisibility()
+	end
 end)
-local function vu442()
-    local vu437 = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"
-    local v438, v439 = pcall(function()
-        return vu158:GetAsync(vu437)
-    end)
-    if v438 then
-        local v440 = vu158:JSONDecode(v439).data
-        if # v440 <= 0 then
-            Library:CreateNotification("Error", "I can\'t find any server", 4)
-        else
-            local v441 = v440[math.random(1, # v440)]
-            vu155:TeleportToPlaceInstance(game.PlaceId, v441.id, vu152)
-        end
-    else
-        Library:CreateNotification("Error", "I can\'t fetch any server..", 5)
-    end
+local function FindNewServer()
+	local ServerListUrl = "https://games.roblox.com/v1/games/"
+		.. game.PlaceId
+		.. "/servers/Public?sortOrder=Asc&limit=100"
+	local RequestSuccess, ResponseBody = pcall(function()
+		return HttpService:GetAsync(ServerListUrl)
+	end)
+	if RequestSuccess then
+		local ServerList = HttpService:JSONDecode(ResponseBody).data
+		if #ServerList <= 0 then
+			Library:CreateNotification("Error", "I can't find any server", 4)
+		else
+			local RandomServer = ServerList[math.random(1, #ServerList)]
+			TeleportService:TeleportToPlaceInstance(game.PlaceId, RandomServer.ProductId, LocalPlayer)
+		end
+	else
+		Library:CreateNotification("Error", "I can't fetch any server..", 5)
+	end
 end
-v151:CreateButton("Server Hop", function()
-    Library:CreateNotification("Confirmation", "Hop to a new server?", 5, {
-        "Yes",
-        "No"
-    }, {
-        function()
-            Library:CreateNotification("Looking For a new server...", "Please wait..", 10)
-            vu442()
-        end,
-        nil
-    })
+UniversalSection:CreateButton("Server Hop", function()
+	Library:CreateNotification("Confirmation", "Hop to a new server?", 5, {
+		"Yes",
+		"No",
+	}, {
+		function()
+			Library:CreateNotification("Looking For a new server...", "Please wait..", 10)
+			FindNewServer()
+		end,
+		nil,
+	})
 end)
-v151:CreateButton("Rejoin", function()
-    Library:CreateNotification("Confirmation", "Rejoin the game?", 5, {
-        "Yes",
-        "No"
-    }, {
-        function()
-            Library:CreateNotification("Rejoining this server...", "Please wait..", 10)
-            vu155:Teleport(game.PlaceId, vu152)
-        end,
-        nil
-    })
+UniversalSection:CreateButton("Rejoin", function()
+	Library:CreateNotification("Confirmation", "Rejoin the game?", 5, {
+		"Yes",
+		"No",
+	}, {
+		function()
+			Library:CreateNotification("Rejoining this server...", "Please wait..", 10)
+			TeleportService:Teleport(game.PlaceId, LocalPlayer)
+		end,
+		nil,
+	})
 end)
-v151:CreateButton("Infinite Yield", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+UniversalSection:CreateButton("Infinite Yield", function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 end)
-v151:CreateButton("Respawn", function()
-    local v443 = vu152.Character
-    if v443 and v443:FindFirstChild("Humanoid") then
-        local v444 = v443.Humanoid
-        v444:TakeDamage(v444.Health)
-        task.wait(0.1)
-        vu152:LoadCharacter()
-        vu156:SetCore("SendNotification", {
-            Title = "Respawn",
-            Text = "Respawned!",
-            Duration = 2
-        })
-    end
+UniversalSection:CreateButton("Respawn", function()
+	local PlayerCharacter = LocalPlayer.Character
+	if PlayerCharacter and PlayerCharacter:FindFirstChild("Humanoid") then
+		local Humanoid = PlayerCharacter.Humanoid
+		Humanoid:TakeDamage(Humanoid.Health)
+		task.wait(0.1)
+		LocalPlayer:LoadCharacter()
+		StarterGui:SetCore("SendNotification", {
+			Title = "Respawn",
+			Text = "Respawned!",
+			Duration = 2,
+		})
+	end
 end)
-print("\nTested & working on:\nUltra hatching simulator X\nClick game X\nPet hatching simulator 99\nClickers Adventure\nClicker adventure\nSecret Tappers\nMysterious Hatchers X\nClicker legends\nTapping Master\nMega Hatchers X\nUltimate tappers\npet tappers\nPet hatchers X\ntapping gods\nGodly tappers 99\nslushy tappers\ntapping mayhem\negg tappers\nWWII Tycoon\nUndead-Rising-Tycoon\nProtect the house\nprison mining simulator\npyro playground\ninfections battleground\nThe-1-000-000-Glass-Bridge\nReborn as Driller")
-local Section = v148:CreateSection("Game List")
-local Sec = v148:CreateSection("Teleport")
-local gm = {
-["Reborn As driller"] = 121280127579038,
-["Protect the house"] = 77477180745179,
-["Block Incremental"]=71718181,
-["Fun squid game! glass bridge 2"] = 85532644946801,
-["The $1000000 glass bridge"] = 87854376962069,
-["Prison mining simulator"] = 94886636839149,
-["Golden Clickers"] = 14076010618,
-["Clickers Adventure"] = 92774394395352,
-["Luck! Clickers Adventures!"] = 87557890946310,
-["New Clicker Adventure"] = 116303778461334,
-["Secret Tappers"] = 127613395571937,
-["Mysterious Hatchers"] = 136326314793427,
-["Clicker Legends"] = 79760109249873,
-["Guess the killer"] = 9171716118,
-["Click Game X"] = 124553710181976,
-["Tapping Masters"] = 108202498211862,
-["Mega Hatchers X"] = 101897028138084,
-["Pet hatching simulator reborn"] = 82183747344203,
-["Pet Hatchers X"] = 16168601525,
-["Tapping Gods"] = 95941360258087,
-["Godly Tappers 99"] = 17757552010,
-["Pet Hatching Simulator 99"] = 94640462621211,
-["Ultra pet hatching simulator X"] = 123345140331667
+print(
+	"\nTested & working on:\nUltra hatching simulator X\nClick game X\nPet hatching simulator 99\nClickers Adventure\nClicker adventure\nSecret Tappers\nMysterious Hatchers X\nClicker legends\nTapping Master\nMega Hatchers X\nUltimate tappers\npet tappers\nPet hatchers X\ntapping gods\nGodly tappers 99\nslushy tappers\ntapping mayhem\negg tappers\nWWII Tycoon\nUndead-Rising-Tycoon\nProtect the house\nprison mining simulator\npyro playground\ninfections battleground\nThe-1-000-000-Glass-Bridge\nReborn as Driller"
+)
+local Section = TeleporterTab:CreateSection("Game List")
+local TeleportSection = TeleporterTab:CreateSection("Teleport")
+local GameTeleportMap = {
+	["Reborn As driller"] = 121280127579038,
+	["Protect the house"] = 77477180745179,
+	["Block Incremental"] = 71718181,
+	["Fun squid game! glass bridge 2"] = 85532644946801,
+	["The $1000000 glass bridge"] = 87854376962069,
+	["Prison mining simulator"] = 94886636839149,
+	["Golden Clickers"] = 14076010618,
+	["Clickers Adventure"] = 92774394395352,
+	["Luck! Clickers Adventures!"] = 87557890946310,
+	["New Clicker Adventure"] = 116303778461334,
+	["Secret Tappers"] = 127613395571937,
+	["Mysterious Hatchers"] = 136326314793427,
+	["Clicker Legends"] = 79760109249873,
+	["Guess the killer"] = 9171716118,
+	["Click Game X"] = 124553710181976,
+	["Tapping Masters"] = 108202498211862,
+	["Mega Hatchers X"] = 101897028138084,
+	["Pet hatching simulator reborn"] = 82183747344203,
+	["Pet Hatchers X"] = 16168601525,
+	["Tapping Gods"] = 95941360258087,
+	["Godly Tappers 99"] = 17757552010,
+	["Pet Hatching Simulator 99"] = 94640462621211,
+	["Ultra pet hatching simulator X"] = 123345140331667,
 }
 
 local selectedGame = nil
-local Label = Sec:CreateLabel("SelectedGame", "Selected:\nNone")
+local Label = TeleportSection:CreateLabel("SelectedGame", "Selected:\nNone")
 
-for gameName, _ in pairs(gm) do Section:CreateLabel(gameName, gameName, function() selectedGame = gameName Label.ChangeText("Selected: " .. gameName) end, {holdColor = true}) end
+for gameName, UnusedParameter in pairs(GameTeleportMap) do
+	Section:CreateLabel(gameName, gameName, function()
+		selectedGame = gameName
+		Label.ChangeText("Selected: " .. gameName)
+	end, { holdColor = true })
+end
 
-
-Sec:CreateButton("Teleport to Game", function() if selectedGame and gm[selectedGame] then local gameId = gm[selectedGame] game:GetService("TeleportService"):Teleport(gameId, game.Players.LocalPlayer) else Library:CreateNotification("Error", "Please select a game first!", 3) end end)
-local v445 = Instance.new("ScreenGui")
-v445.Name = "CustomNotification"
-v445.Parent = game.CoreGui
-local v446 = Instance.new("Frame")
-v446.Size = UDim2.new(0, 300, 0, 50)
-v446.Position = UDim2.new(1, - 320, 1, - 100)
-v446.AnchorPoint = Vector2.new(1, 1)
-v446.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-v446.BackgroundTransparency = 0.2
-v446.Parent = v445
-local v447 = Instance.new("TextLabel")
-v447.Size = UDim2.new(1, - 50, 1, 0)
-v447.Position = UDim2.new(0, 50, 0, 0)
-v447.Font = Enum.Font.SourceSansBold
-v447.Text = "Thank you for using my script!\nif you don\'t mind give me a like on the website"
-v447.TextColor3 = Color3.fromRGB(255, 255, 255)
-v447.TextSize = 16
-v447.TextXAlignment = Enum.TextXAlignment.Left
-v447.TextYAlignment = Enum.TextYAlignment.Center
-v447.BackgroundTransparency = 1
-v447.Parent = v446
-local v448 = Instance.new("ImageLabel")
-v448.Size = UDim2.new(0, 40, 0, 40)
-v448.Position = UDim2.new(0, 5, 0.5, - 20)
-v448.Image = "rbxassetid://316605349"
-v448.BackgroundTransparency = 1
-v448.Parent = v446
-v446.Position = UDim2.new(1, 0, 1, - 100)
-v446:TweenPosition(UDim2.new(1, - 320, 1, - 100), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
+TeleportSection:CreateButton("Teleport to Game", function()
+	if selectedGame and GameTeleportMap[selectedGame] then
+		local gameId = GameTeleportMap[selectedGame]
+		game:GetService("TeleportService"):Teleport(gameId, game.Players.LocalPlayer)
+	else
+		Library:CreateNotification("Error", "Please select a game first!", 3)
+	end
+end)
+local NotificationGui = Instance.new("ScreenGui")
+NotificationGui.Name = "CustomNotification"
+NotificationGui.Parent = game.CoreGui
+local NotificationFrame = Instance.new("Frame")
+NotificationFrame.Size = UDim2.new(0, 300, 0, 50)
+NotificationFrame.Position = UDim2.new(1, -320, 1, -100)
+NotificationFrame.AnchorPoint = Vector2.new(1, 1)
+NotificationFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+NotificationFrame.BackgroundTransparency = 0.2
+NotificationFrame.Parent = NotificationGui
+local ThankYouLabel = Instance.new("TextLabel")
+ThankYouLabel.Size = UDim2.new(1, -50, 1, 0)
+ThankYouLabel.Position = UDim2.new(0, 50, 0, 0)
+ThankYouLabel.Font = Enum.Font.SourceSansBold
+ThankYouLabel.Text = "Thank you for using my script!\nif you don't mind give me a like on the website"
+ThankYouLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ThankYouLabel.TextSize = 16
+ThankYouLabel.TextXAlignment = Enum.TextXAlignment.Left
+ThankYouLabel.TextYAlignment = Enum.TextYAlignment.Center
+ThankYouLabel.BackgroundTransparency = 1
+ThankYouLabel.Parent = NotificationFrame
+local ThankYouIcon = Instance.new("ImageLabel")
+ThankYouIcon.Size = UDim2.new(0, 40, 0, 40)
+ThankYouIcon.Position = UDim2.new(0, 5, 0.5, -20)
+ThankYouIcon.Image = "rbxassetid://316605349"
+ThankYouIcon.BackgroundTransparency = 1
+ThankYouIcon.Parent = NotificationFrame
+NotificationFrame.Position = UDim2.new(1, 0, 1, -100)
+NotificationFrame:TweenPosition(
+	UDim2.new(1, -320, 1, -100),
+	Enum.EasingDirection.EasingDirectionOut,
+	Enum.EasingStyle.Quad,
+	0.5,
+	true
+)
 Library:CreateNotification("Thank you for using my script", "This script made by Rndm.\nLibrary Version: Beta", 5, {
-    "Alright",
-    "That\'s cool"
+	"Alright",
+	"That's cool",
 })
 task.wait(6)
-v446:TweenPosition(UDim2.new(1, 0, 1, - 100), Enum.EasingDirection.In, Enum.EasingStyle.Quad, 0.5, true)
+NotificationFrame:TweenPosition(UDim2.new(1, 0, 1, -100), Enum.EasingDirection.In, Enum.EasingStyle.Quad, 0.5, true)
 task.wait(0.5)
-v445:Destroy()
+NotificationGui:Destroy()
 Library:CreateText({
-    "Support me: PayPal rectnob29@gmail.com. Thank you for your support.",
-    "Enjoying the script? Feel free to support me :)",
-    "Follow me: @sucipto19454",
-    "Also my friend!: @lam_Chloeslay"
+	"Support me: PayPal rectnob29@gmail.com. Thank you for your support.",
+	"Enjoying the script? Feel free to support me :)",
+	"Follow me: @sucipto19454",
+	"Also my friend!: @lam_Chloeslay",
 }, 3, "#FF0000")
