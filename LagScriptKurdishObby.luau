@@ -3,8 +3,6 @@
 -- original owner: https://scriptblox.com/u/Mhammadaram1213
 -- original pastebin url: https://pastebin.com/raw/MQc6KCKF
 -- game: https://www.roblox.com/games/131981556501504/Kurdish-Obbyy
-while true do task.wait() local args = {
-	"aajajajajajajajajajajajajakajjaajajakjajajajajajajaa"
-}
-game:GetService("ReplicatedStorage"):WaitForChild("ChatEvent"):FireServer(unpack(args))
+while task.wait() do
+	game:GetService("ReplicatedStorage"):WaitForChild("ChatEvent"):FireServer("aajajajajajajajajajajajajakajjaajajakjajajajajajajaa")
 end
