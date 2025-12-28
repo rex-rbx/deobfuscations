@@ -4963,7 +4963,7 @@ ThankYouIcon.Parent = NotificationFrame
 NotificationFrame.Position = UDim2.new(1, 0, 1, -100)
 NotificationFrame:TweenPosition(
 	UDim2.new(1, -320, 1, -100),
-	Enum.EasingDirection.EasingDirectionOut,
+	Enum.EasingDirection.Out,
 	Enum.EasingStyle.Quad,
 	0.5,
 	true
