@@ -211,7 +211,7 @@ local function vu50(p27)
         end
         if # v40 > 0 then
             local v46 = (syn and syn.queue_on_teleport) or syn_queue_on_teleport or (fluxus and fluxus.queue_on_teleport) or fluxus_queue_on_teleport or queue_on_teleport or queueonteleport or function() end 
-            v46("\r\n                    getgenv().useWebhooks = \"" .. tostring(getgenv().useWebhooks) .. "\"\r\n                    getgenv().startTime = \"" .. tostring(getgenv().startTime) .. "\"\r\n                    getgenv().webhookURL = \"" .. tostring(getgenv().webhookURL) .. "\"\r\n                    getgenv().webhookFrequency = \"" .. tostring(getgenv().webhookFrequency) .. "\"\r\n                    loadstring(game:HttpGet(\"https://raw.githubusercontent.com/Skzuppy/forge-hub/refs/heads/main/slapfarm_slapple\"))()\r\n                ")
+            v46("\r\n                    getgenv().useWebhooks = \"" .. tostring(getgenv().useWebhooks) .. "\"\r\n                    getgenv().startTime = \"" .. tostring(getgenv().startTime) .. "\"\r\n                    getgenv().webhookURL = \"" .. tostring(getgenv().webhookURL) .. "\"\r\n                    getgenv().webhookFrequency = \"" .. tostring(getgenv().webhookFrequency) .. "\"\r\n                    loadstring(game:HttpGet(\"https://raw.githubusercontent.com/rex-rbx/deobfuscations/refs/heads/main/ForgeHub/AutoSlappleFarm.luau\"))()\r\n                ")
             game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, v40[math.random(1, # v40)], game:GetService("Players").LocalPlayer)
         end
         task.wait()
