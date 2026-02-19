@@ -8,7 +8,6 @@ local lp = Players.LocalPlayer
 local character = lp.Character or lp.CharacterAdded:Wait()
 local request = (http and http.request) or http_request or httprequest or httpreq or request
 local function serverHop()
-    local servers = {}
     local api = `https://games.roblox.com/v1/games/{game.PlaceId}/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true`
     local success, result = pcall(function()
         return HttpService:JSONDecode(game:HttpGet(api))
@@ -16,16 +15,11 @@ local function serverHop()
     if success and result and result.data then
         for _, v in result.data do
             if v.playing < v.maxPlayers and v.id ~= game.JobId then
-                table.insert(servers, v.id)
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], lp)
+                queue_on_teleport("loadstring(game:HttpGet(\"https://raw.githubusercontent.com/rex-rbx/deobfuscations/refs/heads/main/ForgeHub/AutoSlappleFarm.luau\"))()")
+                break
             end
         end
-    end
-    if #servers > 0 then
-        local teleportScript = "loadstring(game:HttpGet(\"https://raw.githubusercontent.com/rex-rbx/deobfuscations/refs/heads/main/ForgeHub/AutoSlappleFarm.luau\"))()"                
-        if queue_on_teleport then
-            queue_on_teleport(teleportScript)
-        end
-        TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], lp)
     end
 end
 local sg = Instance.new("ScreenGui")
@@ -82,7 +76,7 @@ local function startFarm()
                         workspace.CurrentCamera.CameraSubject = light
                         firetouchinterest(root, slapple.Glove, 0)
                         firetouchinterest(root, slapple.Glove, 1)
-                        task.wait(0.1)
+                        task.wait(0.22)
                     end
                 end
             end
