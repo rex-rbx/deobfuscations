@@ -86,6 +86,8 @@ local function startFarm()
                     end
                 end
             end
+            task.wait(1)
+            serverHop()
         else
             serverHop()
             break
