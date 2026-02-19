@@ -15,8 +15,9 @@ local function serverHop()
     if success and result and result.data then
         for _, v in result.data do
             if v.playing < v.maxPlayers and v.id ~= game.JobId then
-                TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], lp)
                 queue_on_teleport("loadstring(game:HttpGet(\"https://raw.githubusercontent.com/rex-rbx/deobfuscations/refs/heads/main/ForgeHub/AutoSlappleFarm.luau\"))()")
+                task.wait(0.22)
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, servers[math.random(1, #servers)], lp)
                 break
             end
         end
