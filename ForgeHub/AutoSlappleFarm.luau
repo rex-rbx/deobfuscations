@@ -20,7 +20,7 @@ if getgenv().useWebhooks == true and getgenv().webhookURL then
             v5
         })
         v3.embeds = v4
-        local v6 = v2:JSONEncode(v3)
+        local v6 = v2:JSONEncode(v3);
         (request or http_request or httprequest or httpreq or (http and http.request) or (syn and syn.request) or (fluxus and fluxus.request) or syn_request or fluxus_request or bunni_request)({
             Url = getgenv().webhookURL,
             Method = "POST",
@@ -28,7 +28,7 @@ if getgenv().useWebhooks == true and getgenv().webhookURL then
                 ["Content-Type"] = "application/json"
             },
             Body = v6
-        })
+        });
         print("Sent")
     end
     if getgenv().startTime then
