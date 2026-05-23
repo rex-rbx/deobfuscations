@@ -8,7 +8,7 @@ local lp = Players.LocalPlayer
 local character = lp.Character or lp.CharacterAdded:Wait()
 local request = (http and http.request) or http_request or httprequest or httpreq or request
 local function serverHop()
-    local api = `https://games.roblox.com/v1/games/{game.PlaceId}/servers/Public?sortOrder=Desc&limit=100&excludeFullGames=true`
+    local api = `https://games.roblox.com/v1/games/{game.PlaceId}/servers/Public?sortOrder=1&limit=100&excludeFullGames=true`
     local success, result = pcall(function()
         return HttpService:JSONDecode(game:HttpGet(api))
     end)
